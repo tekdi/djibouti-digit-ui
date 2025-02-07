@@ -111,12 +111,14 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
     if (!homePageUrlLinksLoading && homePageUrlLinks?.BPA?.homePageUrlLinks?.length > 0) {
       let uniqueLinks = [];
       homePageUrlLinks?.BPA?.homePageUrlLinks?.map((linkData) => {
-        uniqueLinks.push({
-          link: `${linkData?.flow?.toLowerCase()}/${linkData?.applicationType?.toLowerCase()}/${linkData?.serviceType?.toLowerCase()}/docs-required`,
-          i18nKey: t(`BPA_HOME_${linkData?.applicationType}_${linkData?.serviceType}_LABEL`),
-          state: { linkData },
-          linkState: true,
-        });
+        if(linkData.applicationType !== "BUILDING_OC_PLAN_SCRUTINY") {
+          uniqueLinks.push({
+            link: `${linkData?.flow?.toLowerCase()}/${linkData?.applicationType?.toLowerCase()}/${linkData?.serviceType?.toLowerCase()}/docs-required`,
+            i18nKey: t(`BPA_HOME_${linkData?.applicationType}_${linkData?.serviceType}_LABEL`),
+            state: { linkData },
+            linkState: true,
+          });
+        }
       });
       setBpaLinks(uniqueLinks);
     }
@@ -162,21 +164,21 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
       className: "CitizenHomeCard",
       styles: { padding: "0px", minWidth: "90%", minHeight: "90%" },
     },
-    {
-      title: t("ACTION_TEST_EDCR_SCRUTINY"),
-      Icon: <EDCRIcon className="fill-path-primary-main" />,
-      links: [
-        {
-          link: `edcrscrutiny/apply`,
-          i18nKey: t("BPA_PLAN_SCRUTINY_FOR_NEW_CONSTRUCTION_LABEL"),
-        },
-        {
-          link: `edcrscrutiny/oc-apply`,
-          i18nKey: t("BPA_OC_PLAN_SCRUTINY_FOR_NEW_CONSTRUCTION_LABEL"),
-        },
-      ],
-      styles: { minWidth: "90%", minHeight: "90%" },
-    },
+    // {
+    //   title: t("ACTION_TEST_EDCR_SCRUTINY"),
+    //   Icon: <EDCRIcon className="fill-path-primary-main" />,
+    //   links: [
+    //     {
+    //       link: `edcrscrutiny/apply`,
+    //       i18nKey: t("BPA_PLAN_SCRUTINY_FOR_NEW_CONSTRUCTION_LABEL"),
+    //     },
+    //     {
+    //       link: `edcrscrutiny/oc-apply`,
+    //       i18nKey: t("BPA_OC_PLAN_SCRUTINY_FOR_NEW_CONSTRUCTION_LABEL"),
+    //     },
+    //   ],
+    //   styles: { minWidth: "90%", minHeight: "90%" },
+    // },
     {
       title: t("ACTION_TEST_BPA_STAKE_HOLDER_HOME"),
       Icon: <BPAIcon className="fill-path-primary-main" />,
