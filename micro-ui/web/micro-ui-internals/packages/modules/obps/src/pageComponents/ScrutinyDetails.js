@@ -69,7 +69,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   // const { data, isLoading, refetch } = Digit.Hooks.obps.useScrutinyDetails(tenantId, formData?.data?.scrutinyNumber, {
   //   enabled: true,
   // });
-  const [data,setData] = useState({});
+  const [data] = useState({});
   const [numberFoFloor, setNumberFoFloor] = useState(0);
   const blocks = useMemo(() => [{ number: 1 }], []);
   const activeCell = useRef(null);
@@ -181,9 +181,17 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
       } else {
         return (
           <span
+            role="button"
+            tabIndex={0}
             onClick={() => {
               activeCell.current = { rowIndex, columnId };
               setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                activeCell.current = { rowIndex, columnId };
+                setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
+              }
             }}
           >
             {subOccupancyObject[`Block_Floor_${block.number}`]?.[rowIndex]?.[columnId]}
@@ -350,7 +358,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         {blocks?.map((block, index) => 
           {
             const newTableColumns = getTableColumnsMemoized(block);
-            return <div key={index} style={{ marginTop: "20px" }}>
+            return <div key={`${index + block.number}`} style={{ marginTop: "20px" }}>
             {/* <CardSubHeader style={{ fontSize: "18px" }}>
               {t("BPA_BLOCK_SUBHEADER")} {index + 1}
             </CardSubHeader> */}
