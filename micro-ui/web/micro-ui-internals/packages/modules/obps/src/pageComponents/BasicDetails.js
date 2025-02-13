@@ -53,7 +53,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
       obj[key] = basicDataUpdated[key];
       return obj;
     }, {});
-    if (Object.keys(filteredBasicData).length < 5) {
+    if (Object.keys(filteredBasicData).length < requiredFileds.length) {
       setErrors(Object.keys(filteredBasicData));
     } else {
       setErrors([]);
