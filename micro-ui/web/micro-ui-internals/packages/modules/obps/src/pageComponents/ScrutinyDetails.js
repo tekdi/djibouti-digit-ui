@@ -181,10 +181,17 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
       } else {
         return (
           <div
-            type="button"
+            role="button"
+            tabIndex={0}
             onClick={() => {
               activeCell.current = { rowIndex, columnId };
               setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                activeCell.current = { rowIndex, columnId };
+                setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
+              }
             }}
           >
             {subOccupancyObject[`Block_Floor_${block.number}`]?.[rowIndex]?.[columnId]}
