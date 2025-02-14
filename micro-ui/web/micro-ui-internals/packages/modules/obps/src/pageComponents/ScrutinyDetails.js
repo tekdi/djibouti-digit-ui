@@ -10,49 +10,95 @@ import {
   RemoveableTag,
   Toast,
   Loader,
+  CardLabel,
+  TextInput,
 } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useState, useMemo } from "react";
-import { render } from "react-dom";
+import React, { 
+  useEffect,
+  useState,
+  useMemo,
+  useRef
+} from "react";
+// import { render } from "react-dom";
 import { useTranslation } from "react-i18next";
-import { Link, useHistory, useParams } from "react-router-dom";
+// import { Link, useHistory, useParams } from "react-router-dom";
 import Timeline from "../components/Timeline";
 import { stringReplaceAll } from "../utils";
 
+const tableHeader = [
+  {
+    name: "BPA_TABLE_COL_FLOOR",
+    id: "Floor",
+  },
+  {
+    name: "BPA_TABLE_COL_LEVEL",
+    id: "Level",
+  },
+  {
+    name: "BPA_TABLE_COL_OCCUPANCY",
+    id: "Occupancy",
+  },
+  {
+    name: "BPA_TABLE_COL_BUILDUPAREA",
+    id: "BuildupArea",
+  },
+  {
+    name: "BPA_TABLE_COL_FLOORAREA",
+    id: "FloorArea",
+  },
+  {
+    name: "BPA_TABLE_COL_CARPETAREA",
+    id: "CarpetArea",
+  },
+];
+
 const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   const { t } = useTranslation();
-  const history = useHistory();
-  const [subOccupancy, setsubOccupancy] = useState([]);
+  // const history = useHistory();
+  // const [subOccupancy, setsubOccupancy] = useState([]);
   const [subOccupancyObject, setsubOccupancyObject] = useState(formData?.subOccupancy || formData?.landInfo?.unit || {});
-  const [subOccupancyOption, setsubOccupancyOption] = useState([]);
-  const [floorData, setfloorData] = useState([]);
-  let scrutinyNumber = `DCR82021WY7QW`;
+  // const [subOccupancyOption, setsubOccupancyOption] = useState([]);
+  // const [floorData, setfloorData] = useState([]);
+  // let scrutinyNumber = `DCR82021WY7QW`;
   let user = Digit.UserService.getUser();
   const tenantId = user?.info?.permanentCity || Digit.ULBService.getCurrentTenantId();
   const checkingFlow = formData?.uiFlow?.flow;
   const [showToast, setShowToast] = useState(null);
   const stateCode = Digit.ULBService.getStateId();
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["SubOccupancyType"]);
-  const { data, isLoading, refetch } = Digit.Hooks.obps.useScrutinyDetails(tenantId, formData?.data?.scrutinyNumber, {
-    enabled: true,
-  });
+  // const { data, isLoading, refetch } = Digit.Hooks.obps.useScrutinyDetails(tenantId, formData?.data?.scrutinyNumber, {
+  //   enabled: true,
+  // });
+  const [data] = useState({});
+  const [numberFoFloor, setNumberFoFloor] = useState(0);
+  const blocks = useMemo(() => [{ number: 1 }], []);
+  const activeCell = useRef(null);
+  const [tempValue, setTempValue] = useState("");
 
-
-  function getFloorData(block) {
+  useEffect(() => {
     let floors = [];
-    block?.building?.floors?.map((ob) => {
+    Array.from({length: numberFoFloor}, (v, k) => k + 1).map((ob) => {
       floors.push({
-        Floor: t(`BPA_FLOOR_NAME_${ob.number}`),
-        Level: ob.number,
-        Occupancy: t(`${ob.occupancies?.[0]?.type}`),
-        BuildupArea: ob.occupancies?.[0]?.builtUpArea,
-        FloorArea: ob.occupancies?.[0]?.floorArea || 0,
-        CarpetArea: ob.occupancies?.[0]?.CarpetArea || 0,
-        key: t(`BPA_FLOOR_NAME_${ob.number}`),
+        Floor: t(`BPA_FLOOR_NAME_${ob}`),
+        Level: ob,
+        Occupancy: t(`${ob.occupancies?.[0]?.type || "Residential"}`),
+        BuildupArea: ob.occupancies?.[0]?.builtUpArea || 7.4005,
+        FloorArea: ob.occupancies?.[0]?.floorArea || 6.435,
+        CarpetArea: ob.occupancies?.[0]?.CarpetArea || 4.56,
+        key: t(`BPA_FLOOR_NAME_${ob}`),
       });
     });
-    return floors;
-  }
+    
+    setsubOccupancyObject((prevSubOccupancyObject) => {
+      const updatedSubOccupancyObject = { ...prevSubOccupancyObject };
+      blocks.forEach((ob) => {
+        updatedSubOccupancyObject[`Block_Floor_${ob.number}`] = floors;
+      });
+      return updatedSubOccupancyObject;
+    });
+  },[numberFoFloor,blocks,t])
 
+  
   function getsuboptions() {
     let suboccoption = [];
     // data &&
@@ -63,41 +109,15 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
     return Digit.Utils.locale.sortDropdownNames(suboccoption,'i18nKey',t);
   }
 
-  const ActionButton = ({ label, jumpTo }) => {
-    const { t } = useTranslation();
-    const history = useHistory();
-    function routeTo() {
-      location.href = jumpTo;
-    }
-    return <LinkButton label={t(label)} onClick={routeTo} />;
-  };
+  // const ActionButton = ({ label, jumpTo }) => {
+  //   const { t } = useTranslation();
+  //   const history = useHistory();
+  //   function routeTo() {
+  //     location.href = jumpTo;
+  //   }
+  //   return <LinkButton label={t(label)} onClick={routeTo} />;
+  // };
 
-  const tableHeader = [
-    {
-      name: "BPA_TABLE_COL_FLOOR",
-      id: "Floor",
-    },
-    {
-      name: "BPA_TABLE_COL_LEVEL",
-      id: "Level",
-    },
-    {
-      name: "BPA_TABLE_COL_OCCUPANCY",
-      id: "Occupancy",
-    },
-    {
-      name: "BPA_TABLE_COL_BUILDUPAREA",
-      id: "BuildupArea",
-    },
-    {
-      name: "BPA_TABLE_COL_FLOORAREA",
-      id: "FloorArea",
-    },
-    {
-      name: "BPA_TABLE_COL_CARPETAREA",
-      id: "CarpetArea",
-    },
-  ];
   const selectOccupancy = (e, data, num) => {
     let blocks = subOccupancyObject;
     let newSubOccupancy = [];
@@ -106,7 +126,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         newSubOccupancy.push(ob?.[1]);
       });
     blocks[`Block_${num}`] = newSubOccupancy;
-    setsubOccupancy(newSubOccupancy);
+    // setsubOccupancy(newSubOccupancy);
     setsubOccupancyObject(blocks);
   };
 
@@ -114,33 +134,86 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
     let afterRemove = subOccupancyObject[`Block_${num}`].filter((value, i) => {
       return i !== index;
     });
-    setsubOccupancy(afterRemove);
+    // setsubOccupancy(afterRemove);
     let temp = subOccupancyObject;
     temp[`Block_${num}`] = afterRemove;
     setsubOccupancyObject(temp);
   };
 
-  const accessData = (plot) => {
+  const accessData = React.useCallback((plot) => {
     const name = plot;
     return (originalRow, rowIndex, columns) => {
       return originalRow[name];
     };
-  };
+  },[]);
 
   const closeToast = () => {
     setShowToast(null);
   };
+  
+  const updateData = React.useCallback(
+    (rowIndex, columnId, value) => {
+      const dataNew = {
+        ...subOccupancyObject,
+        [`Block_Floor_1`]: subOccupancyObject[`Block_Floor_1`]?.map((row, idx) => (idx === rowIndex ? { ...row, [columnId]: value } : row)),
+      };
+      setsubOccupancyObject(dataNew);
+    },
+    [subOccupancyObject]
+  );
+  
+  const renderEditableCell = React.useCallback(
+    (rowIndex, columnId, block) => {
+      const isActive = activeCell.current?.rowIndex === rowIndex && activeCell.current?.columnId === columnId;
+      if (isActive && !["Floor", "Level"].includes(columnId)) {
+        return (
+          <TextInput
+            type="text"
+            value={tempValue}
+            autoFocus
+            onChange={(e) => setTempValue(e.target.value)}
+            onBlur={() => {
+              updateData(rowIndex, columnId, tempValue);
+              activeCell.current = null;
+            }}
+          />
+        );
+      } else {
+        return (
+          <button
+            style={{ margin: 0, padding: 0, background: "transparent", boxSizing: "border-box", boxShadow: "none", cursor: "pointer" }}
+            onClick={() => {
+              activeCell.current = { rowIndex, columnId };
+              setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                activeCell.current = null;
+                setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
+              }
+            }}
+          >
+            {subOccupancyObject[`Block_Floor_${block.number}`]?.[rowIndex]?.[columnId]}
+          </button>
+        );
+      }
+    },
+    [activeCell, subOccupancyObject, tempValue, updateData]
+  );
 
-  const tableColumns = useMemo(() => {
+  const getTableColumnsMemoized = React.useCallback((block) => {
     return tableHeader?.map((ob) => ({
       Header: t(`${ob.name}`),
       accessor: accessData(ob.id),
       id: ob.id,
+      Cell: ({ row }) => {
+        return renderEditableCell(row.index, ob.id, block);
+      },
       //symbol: plot?.symbol,
       //sortType: sortRows,
     }));
-  });
-
+  }, [renderEditableCell, accessData, t]);
+  
   const onSkip = () => onSelect();
 
   const goNext = () => {
@@ -196,7 +269,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
     let res = [];
     let temp = subOccupancyObject;
     temp[`Block_${num}`] = res;
-    setsubOccupancy(res);
+    // setsubOccupancy(res);
     setsubOccupancyObject(temp);
   };
 
@@ -216,12 +289,20 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   }
 
   if (isMdmsLoading) return <Loader /> 
-
+  
   return (
     <React.Fragment>
       <Timeline currentStep={checkingFlow === "OCBPA" ? 2 : 1} flow={checkingFlow === "OCBPA" ? "OCBPA" : ""} />
-      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} /* isDisabled={Object.keys(subOccupancyObject).length === 0} */>
-        <CardSubHeader style={{ fontSize: "20px" }}>{t("BPA_EDCR_DETAILS")}</CardSubHeader>
+      <FormStep
+        t={t}
+        config={config}
+        onSelect={goNext}
+        onSkip={onSkip} /* isDisabled={Object.keys(subOccupancyObject).length === 0} */
+        onChange={(e) => {
+          setNumberFoFloor((pre) => (e?.target?.name === "numberOfFloors" && !isNaN(parseInt(e?.target?.value)) ? parseInt(e?.target?.value) : pre));
+        }}
+      >
+        {/* <CardSubHeader style={{ fontSize: "20px" }}>{t("BPA_EDCR_DETAILS")}</CardSubHeader>
         <StatusTable style={{ border: "none" }}>
           <Row
             className="border-none"
@@ -242,7 +323,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             text={<ActionButton label={t("BPA_SCRUTINY_REPORT_PDF")} jumpTo={data?.planReport} />}
           ></Row>
         </StatusTable>
-        <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
+        <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} /> 
         <CardSubHeader style={{ fontSize: "20px" }}>
           {checkingFlow === "OCBPA" ? t("BPA_ACTUAL_BUILDING_EXTRACT_HEADER") : t("BPA_BUILDING_EXTRACT_HEADER")}
         </CardSubHeader>
@@ -271,13 +352,15 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             }
           ></Row>
         </StatusTable>
-        <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
+        <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} /> */}
         <CardSubHeader style={{ fontSize: "20px" }}>{t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>
-        {data?.planDetail?.blocks?.map((block, index) => (
-          <div key={index} style={{ marginTop: "20px" }}>
-            <CardSubHeader style={{ fontSize: "18px" }}>
+        {blocks?.map((block, index) => 
+          {
+            const newTableColumns = getTableColumnsMemoized(block);
+            return <div key={`${index + block.number}`} style={{ marginTop: "20px" }}>
+            {/* <CardSubHeader style={{ fontSize: "18px" }}>
               {t("BPA_BLOCK_SUBHEADER")} {index + 1}
-            </CardSubHeader>
+            </CardSubHeader> */}
             {!(checkingFlow === "OCBPA") ? (
               <CardSectionHeader style={{ fontWeight: "normal" }} className="card-label-smaller">
                 {t("BPA_SUB_OCCUPANCY_LABEL")}
@@ -295,7 +378,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
                 onSelect={(e) => selectOccupancy(e, data, block.number)}
                 isOBPSMultiple={true}
                 optionsKey="i18nKey"
-                ServerStyle={{ width: "100%", overflowX: "hidden"}}
+                ServerStyle={{ width: "100%", overflowX: "hidden" }}
                 t={t}
               />
             ) : null}
@@ -322,6 +405,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
               ) : null}
               <div style={{ overflowX: "scroll" }}>
                 <Table
+                  name={`block-${block.number}`}
                   className="customTable table-fixed-first-column table-border-style"
                   t={t}
                   disableSort={false}
@@ -331,9 +415,9 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
                   //globalSearch={filterValue}
                   initSortId="S N "
                   //onSearch={onSearch}
-                  //data={[{Floor:"ground floor",Level:1,Occupancy:"self",BuildupArea:440,FloorArea:400,CarpetArea:380,key:"ground floor"},{Floor:"first floor",Level:1,Occupancy:"self",BuildupArea:450,FloorArea:410,CarpetArea:390,key:"first floor"},{Floor:"second floor",Level:1,Occupancy:"self",BuildupArea:400,FloorArea:350,CarpetArea:300,key:"second floor"}]}
-                  data={getFloorData(block)}
-                  columns={tableColumns}
+                  // data={[{Floor:"ground floor",Level:1,Occupancy:"self",BuildupArea:440,FloorArea:400,CarpetArea:380,key:"ground floor"},{Floor:"first floor",Level:1,Occupancy:"self",BuildupArea:450,FloorArea:410,CarpetArea:390,key:"first floor"},{Floor:"second floor",Level:1,Occupancy:"self",BuildupArea:400,FloorArea:350,CarpetArea:300,key:"second floor"}]}
+                  data={subOccupancyObject[`Block_Floor_${block.number}`]||[]}
+                  columns={newTableColumns}
                   getCellProps={(cellInfo) => {
                     return {
                       style: {},
@@ -342,11 +426,11 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
                 />
               </div>
             </div>
-          </div>
-        ))}
+          </div>}
+        )}
         <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
         <CardSubHeader style={{ fontSize: "20px" }}>{t("BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL")}</CardSubHeader>
-        <StatusTable style={{ border: "none" }}>
+        {/* <StatusTable style={{ border: "none" }}>
           <Row
             label={t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")}
             text={
@@ -355,7 +439,11 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
                 : t("CS_NA")
             }
           ></Row>
-        </StatusTable>
+        </StatusTable> */}
+         <div>
+            <CardLabel>{t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")}*</CardLabel>
+            <TextInput name="demolitionArea" signature={true} style={{ marginBottom: "10px" }} onChange={e => handleChange(e?.target || {})} />
+          </div>
       </FormStep>
       {showToast && <Toast error={true} label={t(showToast?.message)} isDleteBtn={true} onClose={closeToast} />}
     </React.Fragment>
@@ -363,3 +451,4 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
 };
 
 export default ScrutinyDetails;
+
