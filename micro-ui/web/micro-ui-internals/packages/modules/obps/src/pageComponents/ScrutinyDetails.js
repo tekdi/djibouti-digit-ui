@@ -180,22 +180,15 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         );
       } else {
         return (
-          <span
-            role="button"
-            tabIndex={0}
+          <div
+            type="button"
             onClick={() => {
               activeCell.current = { rowIndex, columnId };
               setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
             }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                activeCell.current = { rowIndex, columnId };
-                setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
-              }
-            }}
           >
             {subOccupancyObject[`Block_Floor_${block.number}`]?.[rowIndex]?.[columnId]}
-          </span>
+          </div>
         );
       }
     },
