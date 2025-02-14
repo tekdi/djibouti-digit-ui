@@ -192,6 +192,9 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
                 activeCell.current = { rowIndex, columnId };
                 setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
               }
+              if (e.key === " ") {
+                e.preventDefault();
+              }
             }}
           >
             {subOccupancyObject[`Block_Floor_${block.number}`]?.[rowIndex]?.[columnId]}
