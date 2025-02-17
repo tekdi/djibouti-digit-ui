@@ -164,7 +164,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
             <Dropdown
               defaultValue={basicData?.applicationType}
               select={(e) => handleChange({name:"applicationType",value:e.code})}
-              option={mdmsData?.BPA?.ApplicationType || []}
+              option={mdmsData?.BPA?.ApplicationType.filter(item => item.active) || []}
               optionKey="code"
               type="dropdown"
               t={t}
