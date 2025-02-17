@@ -16,7 +16,6 @@ const StakeholderDocuments = ({ t, config, onSelect, userType, formData, setErro
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
     const [documents, setDocuments] = useState(formData?.documents?.documents || []);
-    const [error, setError] = useState(null);
     const [bpaTaxDocuments, setBpaTaxDocuments] = useState([]);
     const [enableSubmit, setEnableSubmit] = useState(true)
     const [checkRequiredFields, setCheckRequiredFields] = useState(false);
@@ -99,8 +98,6 @@ const StakeholderDocuments = ({ t, config, onSelect, userType, formData, setErro
                                 key={index}
                                 document={document}
                                 t={t}
-                                error={error}
-                                setError={setError}
                                 setDocuments={setDocuments}
                                 documents={documents}
                                 setCheckRequiredFields={setCheckRequiredFields}
@@ -108,7 +105,6 @@ const StakeholderDocuments = ({ t, config, onSelect, userType, formData, setErro
                             />
                         );
                     })}
-                    {error && <Toast label={error} isDleteBtn={true} onClose={() => setError(null)} error  />}
                 </FormStep> : <Loader />}
                 {!(formData?.initiationFlow) && <CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={`${t("BPA_APPLICATION_NUMBER_LABEL")} ${formData?.result?.Licenses?.[0]?.applicationNumber} ${t("BPA_DOCS_INFORMATION")}`} className={"info-banner-wrap-citizen-override"}/>}
                 </div>
@@ -121,8 +117,6 @@ function SelectDocument({
     t,
     document: doc,
     setDocuments,
-    error,
-    setError,
     documents,
     setCheckRequiredFields,
     isCitizenUrl
@@ -139,10 +133,13 @@ function SelectDocument({
     );
     const [file, setFile] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.fileStoreId || null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleSelectDocument = (value) => setSelectedDocument(value);
 
     function selectfile(e) {
+        if(isLoading) return;
         setFile(e.target.files[0]);
     }
 
@@ -181,15 +178,21 @@ function SelectDocument({
                     setError(t(`NOT_SUPPORTED_FILE_TYPE`))
                 } else {
                     try {
+                        setIsLoading(true);
                         setUploadedFile(null);
                         const response = await Digit.UploadServices.Filestorage("PT", file, tenantId?.split(".")[0]);
                         if (response?.data?.files?.length > 0) {
                             setUploadedFile(response?.data?.files[0]?.fileStoreId);
                         } else {
                             setError(t("CS_FILE_UPLOAD_ERROR"));
+                            setIsLoading(false);
                         }
                     } catch (err) {
                         setError(t("CS_FILE_UPLOAD_ERROR"));
+                        setIsLoading(false);
+                    }
+                    finally {
+                        setIsLoading(false);
                     }
                 }
             }
@@ -211,6 +214,25 @@ function SelectDocument({
                 message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
                 iserror={error}
             />
+            {error && <Toast label={error} isDleteBtn={true} onClose={() => setError(null)} error  />}
+            {isLoading && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(255, 255, 255, 0.8)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 1000,
+                    }}
+                >
+                    <Loader />
+                </div>
+            )}
         </div>
     );
 
