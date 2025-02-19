@@ -42,13 +42,13 @@ const PropertyAssemblyDetails = ({ t, config, onSelect, userType, formData, form
         ?.sort((a, b) => a.i18nKey.split("_").pop().localeCompare(b.i18nKey.split("_").pop()));
     } else {
       if (Array.isArray(proptype) && proptype.length > 0) {
-        for (i = 0; i < proptype.length; i++) {
+        for (let i = 0; i < proptype.length; i++) {
           if (i != 1 && i != 4 && Array.isArray(proptype) && proptype.length > 0)
-            menu.push({ i18nKey: "COMMON_PROPTYPE_" + stringReplaceAll(proptype[i].code, ".", "_"), code: proptype[i].code });
+            Menu.push({ i18nKey: "COMMON_PROPTYPE_" + stringReplaceAll(proptype[i].code, ".", "_"), code: proptype[i].code });
         }
       }
-      menu.sort((a, b) => a.i18nKey.split("_").pop().localeCompare(b.i18nKey.split("_").pop()));
-      return menu;
+      Menu.sort((a, b) => a.i18nKey.split("_").pop().localeCompare(b.i18nKey.split("_").pop()));
+      return Menu;
     }
   }
 
@@ -70,7 +70,7 @@ const PropertyAssemblyDetails = ({ t, config, onSelect, userType, formData, form
           usagecat[i].code.split(".")[0] == "NONRESIDENTIAL" &&
           usagecat[i].code.split(".").length == 2
         ) {
-          menu.push({ i18nKey: "PROPERTYTAX_BILLING_SLAB_" + usagecat[i].code.split(".")[1], code: usagecat[i].code });
+          Menu.push({ i18nKey: "PROPERTYTAX_BILLING_SLAB_" + usagecat[i].code.split(".")[1], code: usagecat[i].code });
         }
       }
       return menu;
