@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   HomeIcon,
   EditPencilIcon,
   LogoutIcon,
   Loader,
-  AddressBookIcon,
   PropertyHouse,
   CaseIcon,
   CollectionIcon,
@@ -20,10 +19,9 @@ import {
   FirenocIcon,
   LoginIcon
 } from "@egovernments/digit-ui-react-components";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import LogoutDialog from "../../Dialog/LogoutDialog";
 import ChangeCity from "../../ChangeCity";
 
@@ -60,7 +58,7 @@ const Profile = ({ info, stateName, t }) => {
     if (uuid) {
       const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
 
-      if (usersResponse && usersResponse.user && usersResponse.user.length) {
+      if (usersResponse?.user?.length) {
         const userDetails = usersResponse.user[0];
         const thumbs = userDetails?.photo?.split(",");
         setProfilePic(thumbs?.at(0));
@@ -70,7 +68,7 @@ const Profile = ({ info, stateName, t }) => {
   return (
     <div className="profile-section">
       <div className="imageloader imageloader-loaded">
-        <img className="img-responsive img-circle img-Profile" src={profilePic ? profilePic : defaultImage} />
+        <img className="img-responsive img-circle img-Profile" src={profilePic || defaultImage} alt={profilePic ? "User profile picture" : "Default profile image"}/>
       </div>
       <div id="profile-name" className="label-container name-Profile">
         <div className="label-text"> {info?.name} </div>
@@ -119,8 +117,8 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const user = Digit.UserService.getUser();
   let isMobile = window.Digit.Utils.browser.isMobile();
 
-  const [isEmployee, setisEmployee] = useState(false);
-  const [isSidebarOpen, toggleSidebar] = useState(false);
+  const isEmployee = false;
+  const toggleSidebar = false;
   const [showDialog, setShowDialog] = useState(false);
 
   const handleLogout = () => {
