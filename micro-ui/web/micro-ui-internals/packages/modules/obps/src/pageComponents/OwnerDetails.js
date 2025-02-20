@@ -422,7 +422,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                                         onClick={(e) => handleRemove(index)}
                                     />}
                                     <div style={{ marginTop: "30px" }}>
-                                        <div className="field-container">
+                                        <div className="field-container" style={{ marginLeft: "-10px" }}>
                                             <div style={{ position: "relative", zIndex: "100", left: "35px", marginTop: "-24.5px",marginLeft:Webview?"-25px":"-25px" }}>+253</div>
                                             <TextInput
                                                 style={{ background: "#FAFAFA", padding: "0px 35px" }}
