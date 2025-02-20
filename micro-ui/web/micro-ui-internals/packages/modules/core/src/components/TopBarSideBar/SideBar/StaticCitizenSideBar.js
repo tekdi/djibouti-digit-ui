@@ -1,29 +1,29 @@
-import React, { useState } from "react";
 import {
-  HomeIcon,
-  EditPencilIcon,
-  LogoutIcon,
-  Loader,
-  PropertyHouse,
+  BirthIcon,
   CaseIcon,
   CollectionIcon,
-  PTIcon,
+  DeathIcon,
+  EditPencilIcon,
+  FirenocIcon,
+  FSMIcon,
+  HomeIcon,
+  Loader,
+  LoginIcon,
+  LogoutIcon,
+  MCollectIcon,
   OBPSIcon,
   PGRIcon,
-  FSMIcon,
-  WSICon,
-  MCollectIcon,
   Phone,
-  BirthIcon,
-  DeathIcon,
-  FirenocIcon,
-  LoginIcon
+  PropertyHouse,
+  PTIcon,
+  WSICon
 } from "@egovernments/digit-ui-react-components";
-import { Link, useLocation, useHistory } from "react-router-dom";
-import SideBarMenu from "../../../config/sidebar-menu";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import LogoutDialog from "../../Dialog/LogoutDialog";
+import { Link, useHistory, useLocation } from "react-router-dom";
+import SideBarMenu from "../../../config/sidebar-menu";
 import ChangeCity from "../../ChangeCity";
+import LogoutDialog from "../../Dialog/LogoutDialog";
 
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
@@ -117,8 +117,8 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const user = Digit.UserService.getUser();
   let isMobile = window.Digit.Utils.browser.isMobile();
 
-  const isEmployee = false;
-  const toggleSidebar = false;
+  const [isEmployee, setisEmployee] = useState(false);
+  const [isSidebarOpen, toggleSidebar] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
 
   const handleLogout = () => {
