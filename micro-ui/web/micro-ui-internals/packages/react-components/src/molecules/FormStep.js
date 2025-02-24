@@ -47,8 +47,7 @@ const FormStep = ({
     )
       return (
         <React.Fragment key={index}>
-          <CardLabel>{t(input.label)}{input.validation.required ? "*" : ""} {input.labelChildren && input.labelChildren}</CardLabel>
-          {/* {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>} */}
+          <CardLabel>{t(input.label)}{input.validation.required ? "*" : ""} {input.labelChildren}</CardLabel>
           <div className="field-container" style={{ justifyContent: "left" }}>
             {componentInFront ? <span className="citizen-card-input citizen-card-input--front">{componentInFront}</span> : null}
             <TextInput
