@@ -1,5 +1,5 @@
 import React, { 
-  // useEffect,
+  useEffect,
    useState
 } from "react";
 import { 
@@ -59,7 +59,6 @@ const BasicDetails = ({ formData, onSelect, config }) => {
       setErrors([]);
     }
   };
-  
   // const handleKeyPress = async (event) => {
   //   if (event.key === "Enter") {
   //     if (!scrutinyNumber?.edcrNumber) return;
@@ -133,6 +132,11 @@ const BasicDetails = ({ formData, onSelect, config }) => {
   //     getDetails();
   //   }
   // }
+
+  useEffect(()=>{
+    setBasicData(formData?.data)
+  },[formData?.data])
+
   return (
     <div>
       {showToast && <Toast error={true} label={t(`${showToast?.message}`)} onClose={closeToast} isDleteBtn={true} />}
@@ -150,82 +154,90 @@ const BasicDetails = ({ formData, onSelect, config }) => {
           style={{ marginBottom: "10px" }}
         />
       </div> */}
-     
-      {basicData && (
-        <Card>
-          <CardCaption>{t(`BPA_SCRUTINY_DETAILS`)}</CardCaption>
-          <CardHeader>{t(`BPA_BASIC_DETAILS_TITLE`)}</CardHeader>
-          <div>
-            <CardLabel>{t("BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL")}*</CardLabel>
-            <TextInput name="applicantName" signature={true} disable={disableVlaue} style={{ marginBottom: "10px" }} onChange={e => handleChange(e?.target || {})} />
-          </div>
-          <div>
-            <CardLabel>{t("BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL")}*</CardLabel>
-            <Dropdown
-              defaultValue={basicData?.applicationType}
-              select={(e) => handleChange({name:"applicationType",value:e.code})}
-              option={mdmsData?.BPA?.ApplicationType.filter(item => item.active) || []}
-              optionKey="code"
-              type="dropdown"
-              t={t}
-            />
-          </div>
-          <div>
-            <CardLabel>{t("BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL")}*</CardLabel>
-            <Dropdown
-              defaultValue={basicData?.serviceType}
-              select={(e) => handleChange({name:"serviceType",value:e.code})}
-              option={mdmsData?.BPA?.ServiceType || []} optionKey="code" type="dropdown" t={t}
-            />
-          </div>
 
-          <div>
-            <CardLabel>{t("BPA_BASIC_DETAILS_OCCUPANCY_LABEL")}*</CardLabel>
-            <Dropdown
-              defaultValue={basicData?.occupancyType}
-              select={(e) => handleChange({name:"occupancyType",value:e.code})}
-              option={mdmsData?.BPA?.OccupancyType || []}
-              optionKey="name"
-              type="dropdown"
-              t={t}
-            />
-          </div>
+      <Card>
+        <CardCaption>{t(`BPA_SCRUTINY_DETAILS`)}</CardCaption>
+        <CardHeader>{t(`BPA_BASIC_DETAILS_TITLE`)}</CardHeader>
+        <div>
+          <CardLabel>{t("BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL")}*</CardLabel>
+          <TextInput name="applicantName" signature={true} disable={disableVlaue} style={{ marginBottom: "10px" }} onChange={e => handleChange(e?.target || {})} value={basicData?.applicantName} />
+        </div>
+        <div>
+          <CardLabel>{t("BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL")}*</CardLabel>
+          <Dropdown
+            defaultValue={basicData?.applicationType}
+            select={(e) => handleChange({ name: "applicationType", value: e.code })}
+            selected={mdmsData?.BPA?.ApplicationType.find(item => item.code == basicData?.applicationType)}
+            option={mdmsData?.BPA?.ApplicationType.filter(item => item.active) || []}
+            optionKey="code"
+            type="dropdown"
+            t={t}
+          />
+        </div>
+        <div>
+          <CardLabel>{t("BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL")}*</CardLabel>
+          <Dropdown
+            defaultValue={basicData?.serviceType}
+            select={(e) => handleChange({ name: "serviceType", value: e.code })}
+            option={mdmsData?.BPA?.ServiceType || []} optionKey="code" type="dropdown" t={t}
+            selected={mdmsData?.BPA?.ServiceType.find(item => item.code == basicData?.serviceType)}
+          />
+        </div>
 
-          <div>
-            <CardLabel>{t("BPA_BASIC_DETAILS_RISK_TYPE_LABEL")}*</CardLabel>
-            <Dropdown
-              defaultValue={basicData?.riskType}
-              select={(e) => handleChange({name:"riskType",value:e.riskType})}
-              option={mdmsData?.BPA?.RiskTypeComputation || []}
-              optionKey="riskType"
-              type="dropdown"
-              t={t}
-            />
-          </div>
-          <div>
-            <CardLabel>{t("BPA_BASIC_DETAILS_APP_DATE_LABEL")}*</CardLabel>
-            <TextInput
-              defaultValue={basicData.applicationDate}
-              {...{
-                label: "ExampleDate",
-                placeholder: "dd/mm/yyyy",
-                type: "date",
-                disable: false,
-                nonEditable: true,
-                infoMessage: "Sample info message",
-                description: "Help Text",
-                charCount: true,
-                withoutLabel: false,
-                populators: {
-                  name: "defaultDate",
-                  error: "Error Message",
-                  editableDate: true,
-                },
-              }}
-            />
-          </div>
-          <SubmitBar label={t(`CS_COMMON_NEXT`)} onSubmit={handleSubmit} disabled={Boolean(!errors || errors?.length > 0)} />
-          {/*<StatusTable>
+        <div>
+          <CardLabel>{t("BPA_BASIC_DETAILS_OCCUPANCY_LABEL")}*</CardLabel>
+          <Dropdown
+            defaultValue={basicData?.occupancyType}
+            select={(e) => handleChange({ name: "occupancyType", value: e.code })}
+            option={mdmsData?.BPA?.OccupancyType || []}
+            optionKey="name"
+            type="dropdown"
+            t={t}
+            selected={mdmsData?.BPA?.OccupancyType.find(item => item.code == basicData?.occupancyType)}
+          />
+        </div>
+
+        <div>
+          <CardLabel>{t("BPA_BASIC_DETAILS_RISK_TYPE_LABEL")}*</CardLabel>
+          <Dropdown
+            defaultValue={basicData?.riskType}
+            select={(e) => handleChange({ name: "riskType", value: e.riskType })}
+            option={mdmsData?.BPA?.RiskTypeComputation || []}
+            optionKey="riskType"
+            type="dropdown"
+            t={t}
+            selected={mdmsData?.BPA?.RiskTypeComputation.find(item => item.riskType == basicData?.riskType)}
+          />
+        </div>
+        <div>
+          <CardLabel>{t("BPA_BASIC_DETAILS_APP_DATE_LABEL")}*</CardLabel>
+          <TextInput
+            defaultValue={basicData?.applicationDate}
+            {...{
+              label: "ExampleDate",
+              placeholder: "dd/mm/yyyy",
+              type: "date",
+              disable: false,
+              nonEditable: true,
+              infoMessage: "Sample info message",
+              description: "Help Text",
+              charCount: true,
+              withoutLabel: false,
+              populators: {
+                name: "defaultDate",
+                error: "Error Message",
+                editableDate: true,
+              },
+            }}
+          />
+        </div>
+        <SubmitBar label={t(`CS_COMMON_NEXT`)} onSubmit={handleSubmit}
+          disabled={!basicData?.applicantName ||
+            !basicData?.applicationType ||
+            !basicData?.serviceType ||
+            !basicData?.occupancyType ||
+            !basicData?.riskType || Boolean(errors?.length > 0)} />
+        {/*<StatusTable>
              <Row
               className="border-none"
               label={t(`BPA_BASIC_DETAILS_APP_DATE_LABEL`)}
@@ -244,7 +256,6 @@ const BasicDetails = ({ formData, onSelect, config }) => {
           disabled={!scrutinyNumber?.edcrNumber?.length}
            /> : <Loader />} */}
         </Card>
-      )}
     </div>
   );
 };
