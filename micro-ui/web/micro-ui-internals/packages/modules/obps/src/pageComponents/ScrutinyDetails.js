@@ -74,6 +74,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   const blocks = useMemo(() => [{ number: 1 }], []);
   const activeCell = useRef(null);
   const [tempValue, setTempValue] = useState("");
+  const [demolitionArea, setDemolitionArea] = useState(formData?.data?.demolitionArea || "");
 
   useEffect(() => {
     let floors = [];
@@ -216,7 +217,8 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   
   const onSkip = () => onSelect();
 
-  const goNext = () => {
+  const goNext = (data) => {
+
     if (checkingFlow === "OCBPA") {
       if (!formData?.id) {
         let payload = {};
@@ -262,8 +264,10 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
       }
     } else {
       onSelect(config.key, subOccupancyObject);
+      onSelect("data", { ...data, demolitionArea }); 
     }
   };
+
 
   const clearall = (num) => {
     let res = [];
@@ -288,8 +292,11 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
     return returnValue ? returnValue : "NA";
   }
 
+  const handleDemolitionAreaChange = (e) => {
+    setDemolitionArea(e.target.value);
+  };
+
   if (isMdmsLoading) return <Loader /> 
-  
   return (
     <React.Fragment>
       <Timeline currentStep={checkingFlow === "OCBPA" ? 2 : 1} flow={checkingFlow === "OCBPA" ? "OCBPA" : ""} />
@@ -301,6 +308,8 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         onChange={(e) => {
           setNumberFoFloor((pre) => (e?.target?.name === "numberOfFloors" && !isNaN(parseInt(e?.target?.value)) ? parseInt(e?.target?.value) : pre));
         }}
+        _defaultValues={formData?.data}
+
       >
         {/* <CardSubHeader style={{ fontSize: "20px" }}>{t("BPA_EDCR_DETAILS")}</CardSubHeader>
         <StatusTable style={{ border: "none" }}>
@@ -441,8 +450,8 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
           ></Row>
         </StatusTable> */}
          <div>
-            <CardLabel>{t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")}*</CardLabel>
-            <TextInput name="demolitionArea" signature={true} style={{ marginBottom: "10px" }} onChange={e => handleChange(e?.target || {})} />
+            <CardLabel>{t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")}</CardLabel>
+            <TextInput name="demolitionArea" signature={true} style={{ marginBottom: "10px" }} onChange={handleDemolitionAreaChange} value={demolitionArea}/>
           </div>
       </FormStep>
       {showToast && <Toast error={true} label={t(showToast?.message)} isDleteBtn={true} onClose={closeToast} />}

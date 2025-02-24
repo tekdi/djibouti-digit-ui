@@ -40,9 +40,9 @@ const TextInput = (props) => {
             defaultValue={props.defaultValue}
             minLength={props.minlength}
             maxLength={props.maxlength}
-            max={props.max}
+            max={props.maxlength}
             pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
-            min={props.min}
+            min={props.minlength}
             readOnly={props.disable}
             title={props?.validation && props.ValidationRequired ? props?.validation?.title :props.title}
             step={props.step}
@@ -72,10 +72,10 @@ const TextInput = (props) => {
             defaultValue={props.defaultValue}
             minLength={props.minlength}
             maxLength={props.maxlength}
-            max={props.max}
+            max={props.maxlength}
             required={props?.validation && props.ValidationRequired ? props?.validation?.isRequired :props.isRequired || (props.type === "date" && (props.name === "fromDate" ? data.toDate : data.fromDate))}
             pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
-            min={props.min}
+            min={props.minlength}
             readOnly={props.disable}
             title={props?.validation && props.ValidationRequired ? props?.validation?.title :props.title}
             step={props.step}

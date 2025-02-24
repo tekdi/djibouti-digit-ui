@@ -24,7 +24,7 @@ const FormStep = ({
   isMultipleAllow = false,
   showErrorBelowChildren = false,
   childrenAtTheBottom = true,
-  textInputStyle
+  textInputStyle,
 }) => {
   const { register, watch, errors, handleSubmit } = useForm({
     defaultValues: _defaultValues,
@@ -36,12 +36,19 @@ const FormStep = ({
 
   var isDisable = isDisabled ? true : config.canDisable && Object.keys(errors).filter((i) => errors[i]).length;
 
+
   const inputs = config.inputs?.map((input, index) => {
-    if (input.type === "text") {
+    if (input.type === "textarea")
+    return (
+      <React.Fragment key={index}>
+        <CardLabel>{t(input.label)}</CardLabel>
+        <TextArea key={index} name={input.name} value={value} onChange={onChange} inputRef={register(input.validation)} maxLength="1024"></TextArea>
+      </React.Fragment>
+    )
       return (
         <React.Fragment key={index}>
-          <CardLabel>{t(input.label)} {input.labelChildren && input.labelChildren}</CardLabel>
-          {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
+          <CardLabel>{t(input.label)}{input.validation.required ? "*" : ""} {input.labelChildren && input.labelChildren}</CardLabel>
+          {/* {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>} */}
           <div className="field-container" style={{ justifyContent: "left" }}>
             {componentInFront ? <span className="citizen-card-input citizen-card-input--front">{componentInFront}</span> : null}
             <TextInput
@@ -57,18 +64,12 @@ const FormStep = ({
               isMandatory={errors[input.name]}
               disable={input.disable ? input.disable : false}
               textInputStyle={textInputStyle}
+              type={input?.type}
             />
           </div>
         </React.Fragment>
       );
-    }
-    if (input.type === "textarea")
-      return (
-        <React.Fragment key={index}>
-          <CardLabel>{t(input.label)}</CardLabel>
-          <TextArea key={index} name={input.name} value={value} onChange={onChange} inputRef={register(input.validation)} maxLength="1024"></TextArea>
-        </React.Fragment>
-      );
+   
   });
 
   return (
