@@ -95,6 +95,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
       onSelect(config?.key, {
         // scrutinyNumber,
         ...basicData,
+        applicationDate:format(new Date(), "yyyy-MM-dd"),
         // applicantName: basicData?.planDetail?.planInformation?.applicantName,
         // occupancyType: basicData?.planDetail?.planInformation?.occupancy,
         // applicationType: basicData?.appliactionType,
@@ -213,11 +214,13 @@ const BasicDetails = ({ formData, onSelect, config }) => {
           <CardLabel>{t("BPA_BASIC_DETAILS_APP_DATE_LABEL")}*</CardLabel>
           <TextInput
             defaultValue={basicData?.applicationDate}
+            value={basicData?.applicationDate}
+            name="applicationDate" 
             {...{
               label: "ExampleDate",
               placeholder: "dd/mm/yyyy",
               type: "date",
-              disable: false,
+              disable: true,
               nonEditable: true,
               infoMessage: "Sample info message",
               description: "Help Text",

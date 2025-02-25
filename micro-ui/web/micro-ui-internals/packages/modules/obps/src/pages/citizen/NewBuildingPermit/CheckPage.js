@@ -15,14 +15,14 @@ import {
     const history = useHistory();
     const match = useRouteMatch();
     let user = Digit.UserService.getUser();
-    const tenantId = user?.info?.permanentCity || value?.tenantId ||Digit.ULBService.getCurrentTenantId() ;
+    const tenantId = value?.tenantId || user?.info?.permanentCity ||Digit.ULBService.getCurrentTenantId() ;
     let BusinessService;
     if(value.businessService === "BPA_LOW")
     BusinessService="BPA.LOW_RISK_PERMIT_FEE";
     else if(value.businessService === "BPA")
     BusinessService="BPA.NC_APP_FEE";
 
-    const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments,PrevStateNocDocuments,applicationNo } = value;
+    const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments,PrevStateNocDocuments,applicationNo, plotInfo, buildingInfos } = value;
     const isEditApplication = window.location.href.includes("editApplication");
     
       // for application documents
@@ -44,10 +44,7 @@ import {
         });
       }
 
-    const { data:datafromAPI, isLoading, refetch } = Digit.Hooks.obps.useScrutinyDetails(tenantId,value?.data?.scrutinyNumber, {
-        enabled: value?.data?.scrutinyNumber?true:false,
-      })
-    let consumerCode=value?.applicationNo;
+    let consumerCode = value?.applicationNo;
     const fetchBillParams = { consumerCode };
 
     function getdate(date) {
@@ -123,15 +120,15 @@ import {
 
       function getFloorData(block){
         let floors = [];
-        block?.building?.floors.map((ob) => {
+        block?.floorInfos?.map((ob) => {
             floors.push({
-                Floor:t(`BPA_FLOOR_NAME_${ob.number}`),
-                Level:ob.number,
-                Occupancy:t(`${ob.occupancies?.[0]?.type}`),
-                BuildupArea:ob.occupancies?.[0]?.builtUpArea,
-                FloorArea:ob.occupancies?.[0]?.floorArea || 0,
-                CarpetArea:ob.occupancies?.[0]?.CarpetArea || 0,
-                key:t(`BPA_FLOOR_NAME_${ob.number}`),
+                Floor:t(`BPA_FLOOR_NAME_${(ob.level)}`),
+                Level:ob.level,
+                Occupancy:t(`${ob?.usage}`),
+                BuildupArea:ob?.buildupArea,
+                FloorArea:ob?.floorArea || 0,
+                CarpetArea:ob?.carpetArea || 0,
+                key:t(`BPA_FLOOR_NAME_${(ob.level)}`),
             });
         });
         return floors;
@@ -144,7 +141,7 @@ import {
     function getBlockSubOccupancy(index){
       let subOccupancyString = "";
       let returnValueArray = [];
-      subOccupancy && subOccupancy[`Block_${index+1}`] && subOccupancy[`Block_${index+1}`].map((ob) => {
+      data?.subOccupancy &&  data?.subOccupancy[`Block_${index+1}`] &&  data?.subOccupancy[`Block_${index+1}`].map((ob) => {
         // subOccupancyString += `${t(ob.i18nKey)}, `;
         returnValueArray.push(`${t(stringReplaceAll(ob?.i18nKey?.toUpperCase(), "-", "_"))}`);
       })
@@ -152,7 +149,7 @@ import {
       // return subOccupancyString;
     }
 
-    if (pdfLoading || isLoading) {
+    if (pdfLoading) {
       return <Loader />
     }
 
@@ -185,17 +182,17 @@ import {
           style={{ width: "100px", display:"inline" }}
           onClick={() => routeTo(`${routeLink}/plot-details`)}
         />
-          <Row className="border-none" textStyle={{paddingLeft:"12px"}} label={t(`BPA_BOUNDARY_PLOT_AREA_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.plotArea ? `${datafromAPI?.planDetail?.planInformation?.plotArea} ${t(`BPA_SQ_FT_LABEL`)}` : t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.plotNo || t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_KHATHA_NUMBER_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.khataNo || t("CS_NA")}/>
+          <Row className="border-none" textStyle={{paddingLeft:"12px"}} label={t(`BPA_BOUNDARY_PLOT_AREA_LABEL`)} text={plotInfo?.plotArea ? `${plotInfo?.plotArea} ${t(`BPA_SQ_FT_LABEL`)}` : t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={plotInfo?.plotNumber || t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_KHATHA_NUMBER_LABEL`)} text={plotInfo?.khataNumber || t("CS_NA")}/>
           <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={data?.holdingNumber || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={data?.registrationDetails || t("CS_NA")} />
     </StatusTable>
     </Card>
     <Card style={{paddingRight:"16px"}}>
     <CardHeader>{t("BPA_STEPPER_SCRUTINY_DETAILS_HEADER")}</CardHeader>
-    <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_EDCR_DETAILS")}</CardSubHeader>
-    <StatusTable  style={{border:"none"}}>
+    {/* <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_EDCR_DETAILS")}</CardSubHeader> */}
+    {/* <StatusTable  style={{border:"none"}}>
       <Row className="border-none" label={t("BPA_EDCR_NO_LABEL")} text={data?.scrutinyNumber?.edcrNumber}></Row>
       <CardSubHeader>{t("BPA_UPLOADED_PLAN_DIAGRAM")}</CardSubHeader>
       <LinkButton
@@ -209,19 +206,19 @@ import {
           onClick={() => routeTo(datafromAPI?.planReport)}
        />
        <p style={{ marginTop: "8px", marginBottom: "20px", textAlign:"Left", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t(`BPA_SCRUTINY_REPORT_PDF`)}</p>
-      </StatusTable>
+      </StatusTable> */}
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_BUILDING_EXTRACT_HEADER")}</CardSubHeader>
       <StatusTable>
-      <Row className="border-none" label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")} text={`${datafromAPI?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea} ${t("BPA_SQ_MTRS_LABEL")}`}></Row>
-      <Row className="border-none" label={t("BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL")} text={datafromAPI?.planDetail?.blocks?.[0]?.building?.totalFloors}></Row>
-      <Row className="border-none" label={t("BPA_HEIGHT_FROM_GROUND_LEVEL_FROM_MUMTY")} text={`${datafromAPI?.planDetail?.blocks?.[0]?.building?.declaredBuildingHeight} ${t("BPA_MTRS_LABEL")}`}></Row>
+      <Row className="border-none" label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")} text={`${buildingInfos?.[0]?.totalBuiltupArea} ${t("BPA_SQ_MTRS_LABEL")}`}></Row>
+      <Row className="border-none" label={t("BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL")} text={buildingInfos?.[0]?.numberOfFloors}></Row>
+      <Row className="border-none" label={t("BPA_HEIGHT_FROM_GROUND_LEVEL_FROM_MUMTY")} text={`${buildingInfos?.[0]?.buildingHeight} ${t("BPA_MTRS_LABEL")}`}></Row>
       </StatusTable>
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>
-      {datafromAPI?.planDetail?.blocks.map((block,index)=>(
-      <div key={index} style={datafromAPI?.planDetail?.blocks?.length > 1 ?{ marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
-      <CardSubHeader style={{marginTop:"15px", fontSize: "18px"}}>{t("BPA_BLOCK_SUBHEADER")} {index+1}</CardSubHeader>
+      {buildingInfos?.map((block,index)=>(
+      <div key={index} style={buildingInfos?.length > 1 ?{ marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
+      {/* <CardSubHeader style={{marginTop:"15px", fontSize: "18px"}}>{t("BPA_BLOCK_SUBHEADER")} {index+1}</CardSubHeader> */}
       <StatusTable >
       <Row className="border-none" textStyle={{wordBreak:"break-word"}} label={t("BPA_SUB_OCCUPANCY_LABEL")} text={getBlockSubOccupancy(index) === ""?t("CS_NA"):getBlockSubOccupancy(index)}></Row>
       </StatusTable>
@@ -247,7 +244,7 @@ import {
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL")}</CardSubHeader>
       <StatusTable  style={{border:"none"}}>
-      <Row className="border-none" label={t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")} text={datafromAPI?.planDetail?.planInformation?.demolitionArea ? `${datafromAPI?.planDetail?.planInformation?.demolitionArea} ${t("BPA_SQ_MTRS_LABEL")}` : t("CS_NA")}></Row>
+      <Row className="border-none" label={t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")} text={data?.demolitionArea ? `${data?.demolitionArea} ${t("BPA_SQ_MTRS_LABEL")}` : t("CS_NA")}></Row>
       </StatusTable>
       </Card>
       <Card style={{paddingRight:"16px"}}>

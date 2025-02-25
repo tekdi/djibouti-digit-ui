@@ -314,8 +314,8 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.accountId = accountId;
                 payload.documents = null;
 
-                // Additonal details
-                payload.additionalDetails = {GISPlaceName:formData?.address?.placeName};
+                payload.additionalDetails = {}
+                if (formData?.address?.placeName) payload.additionalDetails.GISPlaceName = formData?.address?.placeName;
                 if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
                 if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
                 if (formData?.data?.demolitionArea) payload.additionalDetails.demolitionArea = formData?.data?.demolitionArea;
