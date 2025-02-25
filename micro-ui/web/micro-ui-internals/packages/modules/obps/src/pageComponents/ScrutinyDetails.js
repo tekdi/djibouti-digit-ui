@@ -70,7 +70,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   //   enabled: true,
   // });
   const [data] = useState({});
-  const [numberFoFloor, setNumberFoFloor] = useState(0);
+  const [numberFoFloor, setNumberFoFloor] = useState(formData?.data?.numberOfFloors || 0);
   const blocks = useMemo(() => [{ number: 1 }], []);
   const activeCell = useRef(null);
   const [tempValue, setTempValue] = useState("");
@@ -83,9 +83,9 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         Floor: t(`BPA_FLOOR_NAME_${ob}`),
         Level: ob,
         Occupancy: t(`${ob.occupancies?.[0]?.type || "Residential"}`),
-        BuildupArea: ob.occupancies?.[0]?.builtUpArea || 7.4005,
-        FloorArea: ob.occupancies?.[0]?.floorArea || 6.435,
-        CarpetArea: ob.occupancies?.[0]?.CarpetArea || 4.56,
+        BuildupArea: ob.occupancies?.[0]?.builtUpArea || 0.0,
+        FloorArea: ob.occupancies?.[0]?.floorArea || 0.0,
+        CarpetArea: ob.occupancies?.[0]?.CarpetArea || 0.0,
         key: t(`BPA_FLOOR_NAME_${ob}`),
       });
     });
@@ -166,7 +166,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   const renderEditableCell = React.useCallback(
     (rowIndex, columnId, block) => {
       const isActive = activeCell.current?.rowIndex === rowIndex && activeCell.current?.columnId === columnId;
-      if (isActive && !["Floor", "Level"].includes(columnId)) {
+      if (isActive && !["Floor", "Level", "Occupancy"].includes(columnId)) {
         return (
           <TextInput
             type="text"
@@ -263,8 +263,8 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         onSelect("", formData, "", true);
       }
     } else {
-      onSelect(config.key, subOccupancyObject);
-      onSelect("data", { ...data, demolitionArea }); 
+      onSelect("data",{...data, demolitionArea, [config.key]:subOccupancyObject,
+      });
     }
   };
 
@@ -417,7 +417,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
                   name={`block-${block.number}`}
                   className="customTable table-fixed-first-column table-border-style"
                   t={t}
-                  disableSort={false}
+                  disableSort={true}
                   autoSort={true}
                   manualPagination={false}
                   isPaginationRequired={false}

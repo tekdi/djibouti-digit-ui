@@ -318,6 +318,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.additionalDetails = {GISPlaceName:formData?.address?.placeName};
                 if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
                 if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
+                if (formData?.data?.demolitionArea) payload.additionalDetails.demolitionArea = formData?.data?.demolitionArea;
                 if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
                 if (formData?.data?.serviceType) payload.additionalDetails.serviceType = formData?.data?.serviceType;
                 //For LandInfo
@@ -334,6 +335,30 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.landInfo.owners = conversionOwners;
                 payload.landInfo.ownershipCategory = ownershipCategory.code;
                 payload.landInfo.tenantId = formData?.address?.city?.code;
+
+                //For PlotInfo
+                payload.plotInfo={};
+                payload.plotInfo.plotArea = Number(formData?.data?.plotArea);
+                payload.plotInfo.plotNumber = formData?.data?.plotNumber;
+                payload.plotInfo.khataNumber = formData?.data?.khataNumber;
+
+                //For BuildingInfo
+                payload.buildingInfos=[{}];
+                payload.buildingInfos[0].totalBuiltupArea = Number(formData?.data?.totalBuiltupArea);
+                payload.buildingInfos[0].numberOfFloors = Number(formData?.data?.numberOfFloors);
+                payload.buildingInfos[0].buildingHeight = Number(formData?.data?.totalHeight);
+                payload.buildingInfos[0].floorInfos = [];
+
+                formData?.data?.subOccupancy?.Block_Floor_1.map((item)=>{
+                    payload.buildingInfos[0].floorInfos.push({
+                        floorName:item.Floor,
+                        level:Number(item.Level),
+                        usage: item.Occupancy,
+                        buildupArea: Number(item.BuildupArea),
+                        flootArea: Number(item.FloorArea),
+                        carpetArea: Number(item.CarpetArea)
+                    })
+                })
 
                 //for units
                 const blockOccupancyDetails = formData;

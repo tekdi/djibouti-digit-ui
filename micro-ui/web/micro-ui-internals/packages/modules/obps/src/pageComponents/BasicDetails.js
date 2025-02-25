@@ -188,12 +188,12 @@ const BasicDetails = ({ formData, onSelect, config }) => {
           <CardLabel>{t("BPA_BASIC_DETAILS_OCCUPANCY_LABEL")}*</CardLabel>
           <Dropdown
             defaultValue={basicData?.occupancyType}
-            select={(e) => handleChange({ name: "occupancyType", value: e.code })}
+            select={(e) => handleChange({ name: "occupancyType", value: e.name })}
             option={mdmsData?.BPA?.OccupancyType || []}
             optionKey="name"
             type="dropdown"
             t={t}
-            selected={mdmsData?.BPA?.OccupancyType.find(item => item.code == basicData?.occupancyType)}
+            selected={mdmsData?.BPA?.OccupancyType.find(item => item.name == basicData?.occupancyType)}
           />
         </div>
 
