@@ -392,7 +392,7 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
       landId: data?.landId,
       tenantId: data?.tenantId || data?.address?.tenantId,
       approvalDate: data?.approvalDate,
-      applicationDate: data?.applicationDate,
+      // applicationDate: data?.data?.applicationDate,
       status: isSendBackTOCitizen ? data.status : data.status ? data.status : "INITIATED",
       documents: getDocumentforBPA(data?.documents?.documents, data?.PrevStateDocuments),
       landInfo: isOCBPA ? data?.landInfo : { ...data?.landInfo, ownershipCategory: getOwnerShipCategory(data, isOCBPA), owners: getBPAOwners(data, isOCBPA), unit: getBPAUnit(data) },
@@ -410,9 +410,10 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
         holdingNo: data?.data?.holdingNumber ? data?.data?.holdingNumber : data?.additionalDetails?.holdingNo,
         registrationDetails: data?.data?.registrationDetails ? data?.data?.registrationDetails : data?.additionalDetails?.registrationDetails,
       },
-      applicationType: "BUILDING_PLAN_SCRUTINY",
-      serviceType: "NEW_CONSTRUCTION",
-      occupancyType: "A",
+      applicationType: data?.additionalDetails?.applicationType,
+      serviceType: data?.additionalDetails?.serviceType,
+      plotInfo:data?.plotInfo,
+      buildingInfos: data?.buildingInfos
     },
   };
 
@@ -828,7 +829,7 @@ export const getOrderDocuments = (appUploadedDocumnets, isNoc = false) => {
       const resultsDocs = appUploadedDocumnets?.filter(appDoc => uniDoc?.documentType?.split(".")?.slice(0, 2)?.join("_") == appDoc?.documentType?.split(".")?.slice(0, 2)?.join("_"));
       resultsDocs?.forEach(resDoc => resDoc.title = resDoc.documentType);
       finalDocs.push({
-        title: !isNoc ? resultsDocs?.[0]?.documentType?.split(".")?.slice(0, 2)?.join("_") : "",
+        title: !isNoc ? resultsDocs?.[0]?.documentType : "",
         values: resultsDocs
       })
     });

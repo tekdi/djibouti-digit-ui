@@ -22,13 +22,13 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
     const [checkRequiredFields, setCheckRequiredFields] = useState(false);
     const checkingFlow = formData?.uiFlow?.flow;
     const beforeUploadDocuments = cloneDeep(formData?.PrevStateDocuments || []);
-    const {data: bpaTaxDocuments, isLoading} = Digit.Hooks.obps.useBPATaxDocuments(stateId, formData, beforeUploadDocuments || []);
+    const {data: bpaTaxDocuments, isLoading} = Digit.Hooks.obps.useBPATaxDocuments(stateId, formData);
     const handleSubmit = () => {
         let document = formData.documents;
         let documentStep;
         let RealignedDocument = [];
         bpaTaxDocuments && bpaTaxDocuments.map((ob) => {
-            documents && documents.filter(x => ob.code === stringReplaceAll(x?.additionalDetails.category,"_",".")).map((doc) => {
+            documents && documents.filter(x => ob.code === x?.additionalDetails.category.replace(/[_\.]/, ".")).map((doc) => {
                 RealignedDocument.push(doc);
             })
         })
@@ -38,7 +38,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
     const onSkip = () => onSelect();
     function onAdd() { }
     useEffect(() => {
-        const allRequiredDocumentsCode = bpaTaxDocuments.filter( e => e.required).map(e => e.code)
+        const allRequiredDocumentsCode = bpaTaxDocuments.filter(e => e.required).map(e => e.code)
 
         const reqDocumentEntered = allRequiredDocumentsCode.filter(reqCode => documents.reduce((acc,doc) => {
             if (reqCode == `${doc?.documentType?.split('.')?.[0]}.${doc?.documentType?.split('.')?.[1]}`) {
@@ -67,7 +67,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
                     isDisabled={window.location.href.includes("editApplication")||window.location.href.includes("sendbacktocitizen")?false:enableSubmit}
                     onAdd={onAdd}
                 >
-                    {bpaTaxDocuments?.map((document, index) => {
+                    {bpaTaxDocuments && bpaTaxDocuments.map((document, index) => {
                         return (
                             <div style={{ background: "#FAFAFA", border: "1px solid #D6D5D4", padding: "8px", borderRadius: "4px", maxWidth:"600px", minWidth: "280px", marginBottom:"15px", paddingTop:"15px" }}>
                             <SelectDocument

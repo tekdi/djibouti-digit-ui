@@ -95,6 +95,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
       onSelect(config?.key, {
         // scrutinyNumber,
         ...basicData,
+        applicationDate:format(new Date(), "yyyy-MM-dd"),
         // applicantName: basicData?.planDetail?.planInformation?.applicantName,
         // occupancyType: basicData?.planDetail?.planInformation?.occupancy,
         // applicationType: basicData?.appliactionType,
@@ -188,12 +189,12 @@ const BasicDetails = ({ formData, onSelect, config }) => {
           <CardLabel>{t("BPA_BASIC_DETAILS_OCCUPANCY_LABEL")}*</CardLabel>
           <Dropdown
             defaultValue={basicData?.occupancyType}
-            select={(e) => handleChange({ name: "occupancyType", value: e.code })}
+            select={(e) => handleChange({ name: "occupancyType", value: e.name })}
             option={mdmsData?.BPA?.OccupancyType || []}
             optionKey="name"
             type="dropdown"
             t={t}
-            selected={mdmsData?.BPA?.OccupancyType.find(item => item.code == basicData?.occupancyType)}
+            selected={mdmsData?.BPA?.OccupancyType.find(item => item.name == basicData?.occupancyType)}
           />
         </div>
 
@@ -213,11 +214,13 @@ const BasicDetails = ({ formData, onSelect, config }) => {
           <CardLabel>{t("BPA_BASIC_DETAILS_APP_DATE_LABEL")}*</CardLabel>
           <TextInput
             defaultValue={basicData?.applicationDate}
+            value={basicData?.applicationDate}
+            name="applicationDate" 
             {...{
               label: "ExampleDate",
               placeholder: "dd/mm/yyyy",
               type: "date",
-              disable: false,
+              disable: true,
               nonEditable: true,
               infoMessage: "Sample info message",
               description: "Help Text",

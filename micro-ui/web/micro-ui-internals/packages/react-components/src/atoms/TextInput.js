@@ -50,6 +50,7 @@ const TextInput = (props) => {
             onBlur={props.onBlur}
             autoComplete="off"
             disabled={props.disabled}
+            onWheel={(e) => e.target.blur()}
           />
         ) : (
           <input
@@ -84,6 +85,7 @@ const TextInput = (props) => {
             onKeyPress={props.onKeyPress}
             autoComplete="off"
             disabled={props.disabled}
+            onWheel={(e) => e.target.blur()}
           />
         )}
         {props.type === "date" && <DatePicker {...props} date={date} setDate={setDate} data={data} />}
