@@ -52,15 +52,15 @@ const SubOccupancyTable = ({ edcrDetails, applicationData }) => {
 
   function getFloorData(block) {
     let floors = [];
-    block?.building?.floors.map((ob) => {
+    block?.floorInfos?.map((ob) => {
       floors.push({
-        Floor: t(`BPA_FLOOR_NAME_${ob.number}`),
-        Level: ob.number,
-        Occupancy: t(`${ob.occupancies?.[0]?.type}`),
-        BuildupArea: ob.occupancies?.[0]?.builtUpArea,
-        FloorArea: ob.occupancies?.[0]?.floorArea || 0,
-        CarpetArea: ob.occupancies?.[0]?.CarpetArea || 0,
-        key: t(`BPA_FLOOR_NAME_${ob.number}`),
+        Floor: t(`BPA_FLOOR_NAME_${ob.level}`),
+        Level: ob.level,
+        Occupancy: t(`${ob.usage}`),
+        BuildupArea: ob.buildupArea,
+        FloorArea: ob.floorArea || 0,
+        CarpetArea: ob.carpetArea || 0,
+        key: t(`BPA_FLOOR_NAME_${ob.level}`),
       });
     });
     return floors;
@@ -97,8 +97,8 @@ const SubOccupancyTable = ({ edcrDetails, applicationData }) => {
           })}
         </StatusTable>
 
-        {edcrDetails?.subOccupancyTableDetails?.[0]?.value?.planDetail?.blocks.map((block, index) => (
-          <div key={index} style={edcrDetails?.subOccupancyTableDetails?.[0]?.value?.planDetail?.blocks?.length > 0 ? {marginBottom: "30px", background: "#FAFAFA", border: "1px solid #D6D5D4", padding: "8px", borderRadius: "4px", maxWidth: "950px", minWidth: "280px"} : {marginBottom: "30px"}}>
+        {applicationData?.buildingInfos?.map((block, index) => (
+          <div key={index} style={applicationData?.buildingInfos?.length > 0 ? {marginBottom: "30px", background: "#FAFAFA", border: "1px solid #D6D5D4", padding: "8px", borderRadius: "4px", maxWidth: "950px", minWidth: "280px"} : {marginBottom: "30px"}}>
             <CardSubHeader style={{ marginBottom: "8px", paddingBottom: "9px", color: "#0B0C0C", fontSize: "18px", lineHeight: "19px" }}>{t("BPA_BLOCK_SUBHEADER")} {index + 1}</CardSubHeader>
             <StatusTable>
               <Row className="border-none" textStyle={{wordBreak:"break-word"}} label={`${t("BPA_SUB_OCCUPANCY_LABEL")}`} text={getSubOccupancyValues(index)}></Row>

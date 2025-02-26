@@ -1,6 +1,6 @@
 export const calculateRiskType = (riskTypes, plotArea, blocks) => {
   const buildingHeight = blocks?.reduce((acc, block) => {
-    return Math.max(acc, block.building.buildingHeight)
+    return Math.max(acc, block.buildingHeight)
   }, Number.NEGATIVE_INFINITY);
 
   const risk = riskTypes?.find(riskType => {

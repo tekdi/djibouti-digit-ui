@@ -278,20 +278,13 @@ export const OBPSService = {
     }
     sessionStorage.setItem("BPA_ARCHITECT_NAME", JSON.stringify(response?.BPA?.[0]?.additionalDetails?.typeOfArchitect ? response?.BPA?.[0]?.additionalDetails?.typeOfArchitect : "ARCHITECT"));
     const [BPA] = response?.BPA;
-    const edcrResponse = await OBPSService.scrutinyDetails(BPA?.tenantId, { edcrNumber: BPA?.edcrNumber });
-    const [edcr] = edcrResponse?.edcrDetail;
     const mdmsRes = await MdmsService.getMultipleTypes(tenantId, "BPA", ["RiskTypeComputation", "CheckList"]);
-    const riskType = Digit.Utils.obps.calculateRiskType(mdmsRes?.BPA?.RiskTypeComputation, edcr?.planDetail?.plot?.area, edcr?.planDetail?.blocks);
+    const riskType = Digit.Utils.obps.calculateRiskType(mdmsRes?.BPA?.RiskTypeComputation, BPA?.plotInfo?.plotArea, BPA?.buildingInfos);
     BPA.riskType = riskType;
     const nocResponse = await OBPSService.NOCSearch(BPA?.tenantId, { sourceRefId: BPA?.applicationNo });
     const noc = nocResponse?.Noc;
-    const filter = { approvalNo: edcr?.permitNumber};
+    const filter = { approvalNo: BPA?.approvalNo};
     const bpaResponse = await OBPSService.BPASearch(tenantId, { ...filter });
-       const comparisionRep = {
-         ocdcrNumber: BPA?.edcrNumber.includes("OCDCR")? BPA?.edcrNumber:bpaResponse?.BPA?.[0]?.edcrNumber,
-         edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber.includes("OCDCR")? BPA?.edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber
-      }
-    const comparisionReport = await OBPSService.comparisionReport(BPA?.tenantId, { ...comparisionRep });
 
     noc?.map(nocDetails => {
       nocDetails?.documents?.map(nocDoc => {
@@ -518,12 +511,12 @@ export const OBPSService = {
       isInsert: true,
       isCommon: true,
       values: [
+        { title: "BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL", value: BPA?.additionalDetails?.applicantName },
         { title: "BPA_BASIC_DETAILS_APP_DATE_LABEL", value: BPA?.auditDetails?.createdTime ? format(new Date(BPA?.auditDetails?.createdTime), 'dd/MM/yyyy') : '' },
-        { title: "BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL", value: `WF_BPA_${edcr?.appliactionType}` },
-        { title: "BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL", value: edcr?.applicationSubType },
-        { title: "BPA_BASIC_DETAILS_OCCUPANCY_LABEL", value: edcr?.planDetail?.planInformation?.occupancy },
-        { title: "BPA_BASIC_DETAILS_RISK_TYPE_LABEL", value: `WF_BPA_${riskType}`, isInsert: true, },
-        { title: "BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL", value: edcr?.planDetail?.planInformation?.applicantName },
+        { title: "BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL", value: `WF_BPA_${BPA?.additionalDetails?.applicationType}` },
+        { title: "BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL", value: BPA?.additionalDetails?.serviceType },
+        { title: "BPA_BASIC_DETAILS_OCCUPANCY_LABEL", value: BPA?.additionalDetails?.occupancyType },
+        { title: "BPA_BASIC_DETAILS_RISK_TYPE_LABEL", value: `WF_BPA_${riskType}`, isInsert: true, }
       ]
     };
 
@@ -532,29 +525,14 @@ export const OBPSService = {
       asSectionHeader: true,
       isCommon: true,
       values: [
-        { title: "BPA_BOUNDARY_PLOT_AREA_LABEL", value: `${edcr?.planDetail?.planInformation?.plotArea}`, isNotTranslated: true, isUnit: "BPA_SQ_FT_LABEL" },
-        { title: "BPA_PLOT_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.plotNo || "NA", isNotTranslated: true  },
-        { title: "BPA_KHATHA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.khataNo || "NA", isNotTranslated: true  },
+        { title: "BPA_BOUNDARY_PLOT_AREA_LABEL", value: `${BPA?.plotInfo?.plotArea}`, isNotTranslated: true, isUnit: "BPA_SQ_FT_LABEL" },
+        { title: "BPA_PLOT_NUMBER_LABEL", value: BPA?.plotInfo?.plotNumber || "NA", isNotTranslated: true  },
+        { title: "BPA_KHATHA_NUMBER_LABEL", value: BPA?.plotInfo?.khataNumber || "NA", isNotTranslated: true  },
         { title: "BPA_HOLDING_NUMBER_LABEL", value: BPA?.additionalDetails?.holdingNo || "NA", isNotTranslated: true  },
         { title: "BPA_BOUNDARY_LAND_REG_DETAIL_LABEL", value: BPA?.additionalDetails?.registrationDetails || "NA", isNotTranslated: true }
       ]
     };
 
-    const scrutinyDetails = {
-      title: "BPA_STEPPER_SCRUTINY_DETAILS_HEADER",
-      isScrutinyDetails: true,
-      isBackGroundColor: true,
-      additionalDetails: {
-        values: [
-          { title: "BPA_EDCR_DETAILS", value: " ", isHeader: true },
-          { title: BPA?.businessService !== "BPA_OC" ? "BPA_EDCR_NO_LABEL" : "BPA_OC_EDCR_NO_LABEL", value: BPA?.edcrNumber || "NA" },
-        ],
-        scruntinyDetails: [
-          { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.updatedDxfFile, text: "BPA_UPLOADED_PLAN_DXF" },
-          { title: "BPA_SCRUNTINY_REPORT_OUTPUT", value: edcr?.planReport, text: "BPA_SCRUTINY_REPORT_PDF" },
-        ]
-      }
-    };
 
     const buildingExtractionDetails = {
       title: "",
@@ -563,9 +541,9 @@ export const OBPSService = {
       additionalDetails: {
         values: [
           { title: BPA?.businessService !== "BPA_OC" ? "BPA_BUILDING_EXTRACT_HEADER" : "BPA_ACTUAL_BUILDING_EXTRACT_HEADER", value : " ", isHeader: true},
-          { title: "BPA_TOTAL_BUILT_UP_AREA_HEADER", value: edcr?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea, isUnit: "BPA_SQ_MTRS_LABEL"},
-          { title: "BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL", value: edcr?.planDetail?.blocks?.[0]?.building?.totalFloors || "NA" },
-          { title: "BPA_HEIGHT_FROM_GROUND_LEVEL", value: edcr?.planDetail?.blocks?.[0]?.building?.declaredBuildingHeigh ,  isUnit: "BPA_MTRS_LABEL" }
+          { title: "BPA_TOTAL_BUILT_UP_AREA_HEADER", value: BPA?.buildingInfos[0]?.totalBuiltupArea, isUnit: "BPA_SQ_MTRS_LABEL"},
+          { title: "BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL", value: BPA?.buildingInfos[0]?.numberOfFloors || "NA" },
+          { title: "BPA_HEIGHT_FROM_GROUND_LEVEL", value: BPA?.buildingInfos[0]?.buildingHeight ,  isUnit: "BPA_MTRS_LABEL" }
         ],
         scruntinyDetails: []
       }
@@ -578,7 +556,7 @@ export const OBPSService = {
       additionalDetails: {
         values: [
           { title: "BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL", value : " ", isHeader: true},
-          { title: "BPA_APPLICATION_DEMOLITION_AREA_LABEL", value: edcr?.planDetail?.planInformation?.demolitionArea, isUnit: "BPA_SQ_MTRS_LABEL" } 
+          { title: "BPA_APPLICATION_DEMOLITION_AREA_LABEL", value: BPA?.additionalDetails?.demolitionArea, isUnit: "BPA_SQ_MTRS_LABEL" } 
         ],
         scruntinyDetails: []
       }
@@ -593,7 +571,7 @@ export const OBPSService = {
           { title: "BPA_OCC_SUBOCC_HEADER", value : " ", isHeader: true} 
         ],
         subOccupancyTableDetails: [
-          { title: "BPA_APPLICATION_DEMOLITION_AREA_LABEL", value: edcr },
+          { title: "BPA_APPLICATION_DEMOLITION_AREA_LABEL", value: BPA },
           { title: "NO_REPEAT", value: "" }
         ]
       }
@@ -660,7 +638,7 @@ export const OBPSService = {
     let approvalChecksDetails = {}
     if (BPA?.status === "APPROVAL_INPROGRESS") {
       mdmsRes?.BPA?.CheckList.forEach(checklist => {
-        if (checklist?.RiskType === riskType && checklist?.applicationType === edcr?.appliactionType && checklist?.ServiceType === edcr?.applicationSubType && checklist?.WFState === "PENDINGAPPROVAL" && checklist?.conditions?.length > 0) {
+        if (checklist?.RiskType === riskType && checklist?.applicationType === BPA?.additionalDetails?.applicationType && checklist?.ServiceType === BPA?.additionalDetails?.serviceType && checklist?.WFState === "PENDINGAPPROVAL" && checklist?.conditions?.length > 0) {
           approvalChecks.push(...checklist?.conditions)
         }
       })
@@ -715,9 +693,9 @@ export const OBPSService = {
     }
 
     if(BPA?.businessService !== "BPA_OC") {
-      details = [...details, applicationDetailsInfo, basicDetails, plotDetails, scrutinyDetails, buildingExtractionDetails, subOccupancyTableDetails, demolitionAreaDetails,addressDetails, ownerDetails, documentDetails, fiReports, ...nocDetails, approvalChecksDetails, PermitConditions]
+      details = [...details, applicationDetailsInfo, basicDetails, plotDetails, buildingExtractionDetails, subOccupancyTableDetails, demolitionAreaDetails,addressDetails, ownerDetails, documentDetails, fiReports, ...nocDetails, approvalChecksDetails, PermitConditions]
     } else {
-      details = [...details, applicationDetailsInfo, basicDetails, plotDetails, scrutinyDetails, buildingExtractionDetails, subOccupancyTableDetails, demolitionAreaDetails, documentDetails, fiReports, ...nocDetails, PermitConditions]
+      details = [...details, applicationDetailsInfo, basicDetails, plotDetails, buildingExtractionDetails, subOccupancyTableDetails, demolitionAreaDetails, documentDetails, fiReports, ...nocDetails, PermitConditions]
     }
 
     if (billDetails?.additionalDetails?.values?.length) {
@@ -732,9 +710,7 @@ export const OBPSService = {
       applicationData: BPA,
       applicationDetails: bpaFilterDetails,
       tenantId: BPA?.tenantId,
-      edcrDetails: edcr,
       nocData: noc,
-      comparisionReport: comparisionReport?.comparisonDetail,
       businessService: BPA?.businessService,
       applicationNo: BPA?.applicationNo,
       applicationStatus : BPA?.status,
