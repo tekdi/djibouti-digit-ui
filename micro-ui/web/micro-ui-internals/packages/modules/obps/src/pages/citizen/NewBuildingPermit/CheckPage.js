@@ -138,15 +138,16 @@ import {
         location.href=jumpTo;
     }
 
-    function getBlockSubOccupancy(index){
-      let subOccupancyString = "";
+    function getBlockSubOccupancy(index) {
       let returnValueArray = [];
-      data?.subOccupancy &&  data?.subOccupancy[`Block_${index+1}`] &&  data?.subOccupancy[`Block_${index+1}`].map((ob) => {
-        // subOccupancyString += `${t(ob.i18nKey)}, `;
-        returnValueArray.push(`${t(stringReplaceAll(ob?.i18nKey?.toUpperCase(), "-", "_"))}`);
-      })
-      return returnValueArray?.length ? returnValueArray.join(', ') : "NA"
-      // return subOccupancyString;
+      if (!data || !data.subOccupancy) return "NA";
+
+      (data?.subOccupancy?.[`Block_${index+1}`] || []).map((ob) => {
+        if (ob?.i18nKey) {
+        returnValueArray.push(`${t(stringReplaceAll(ob.i18nKey.toUpperCase(), "-", "_"))}`)
+        }
+      });
+      return returnValueArray.length ? returnValueArray.join(', ') : "NA";
     }
 
     if (pdfLoading) {

@@ -315,12 +315,14 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.documents = null;
 
                 payload.additionalDetails = {}
+                if (formData?.data?.applicantName) payload.additionalDetails.applicantName = formData?.data?.applicantName;
                 if (formData?.address?.placeName) payload.additionalDetails.GISPlaceName = formData?.address?.placeName;
                 if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
                 if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
                 if (formData?.data?.demolitionArea) payload.additionalDetails.demolitionArea = formData?.data?.demolitionArea;
                 if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
                 if (formData?.data?.serviceType) payload.additionalDetails.serviceType = formData?.data?.serviceType;
+                if (formData?.data?.occupancyType) payload.additionalDetails.occupancyType = formData?.data?.occupancyType;
                 //For LandInfo
                 payload.landInfo = {};
                 //For Address

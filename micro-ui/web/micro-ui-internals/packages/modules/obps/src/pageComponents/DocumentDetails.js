@@ -20,6 +20,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
     const [error, setError] = useState(null);
     const [enableSubmit, setEnableSubmit] = useState(true)
     const [checkRequiredFields, setCheckRequiredFields] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const checkingFlow = formData?.uiFlow?.flow;
     const beforeUploadDocuments = cloneDeep(formData?.PrevStateDocuments || []);
     const {data: bpaTaxDocuments, isLoading} = Digit.Hooks.obps.useBPATaxDocuments(stateId, formData);
@@ -27,7 +28,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
         let document = formData.documents;
         let documentStep;
         let RealignedDocument = [];
-        bpaTaxDocuments && bpaTaxDocuments.map((ob) => {
+        bpaTaxDocuments?.map((ob) => {
             documents && documents.filter(x => ob.code === x?.additionalDetails.category.replace(/[_\.]/, ".")).map((doc) => {
                 RealignedDocument.push(doc);
             })
@@ -58,6 +59,24 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
     return (
         <div>
             <Timeline currentStep={checkingFlow === "OCBPA" ? 3 : 2} flow= {checkingFlow === "OCBPA" ? "OCBPA" : ""}/>
+            {isUploading && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(255, 255, 255, 0.8)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 1000,
+                    }}
+                >
+                    <Loader />
+                </div>
+            )}
             {!isLoading ?
                 <FormStep
                     t={t}
@@ -81,6 +100,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
                                 setCheckRequiredFields={setCheckRequiredFields}
                                 formData={formData}
                                 beforeUploadDocuments={beforeUploadDocuments || []}
+                                setIsUploading={setIsUploading}
                             />
                             </div>
                         );
@@ -101,7 +121,8 @@ const SelectDocument = React.memo(function MyComponent({
     documents,
     setCheckRequiredFields,
     formData,
-    beforeUploadDocuments
+    beforeUploadDocuments,
+    setIsUploading
 }) {
     const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0] || beforeUploadDocuments?.filter((item) => item?.documentType?.includes(doc?.code))[0];
     const tenantId = Digit.ULBService.getStateId(); //Digit.ULBService.getCurrentTenantId();
@@ -135,6 +156,7 @@ const SelectDocument = React.memo(function MyComponent({
     }
 
     function getData(e) {
+        setIsUploading(true);
         let key = selectedDocument.code;
         let data,newArr;
         if (e?.length > 0) {
@@ -159,11 +181,13 @@ const SelectDocument = React.memo(function MyComponent({
                 ...newfiles,
             ]
             setDocuments(__documents)
+            setTimeout(() => setIsUploading(false), 1000);
         }else if(e?.length==0){
             const __documents = [
                 ...documents.filter(e => e.documentType !== key ),
             ]
             setDocuments(__documents);
+            setTimeout(() => setIsUploading(false), 1000);
         }
     
         newArr?.map((ob) => {

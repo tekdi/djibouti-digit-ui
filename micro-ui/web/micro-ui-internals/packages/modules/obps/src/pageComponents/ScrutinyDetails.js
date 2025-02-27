@@ -56,7 +56,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   const { t } = useTranslation();
   // const history = useHistory();
   // const [subOccupancy, setsubOccupancy] = useState([]);
-  const [subOccupancyObject, setsubOccupancyObject] = useState(formData?.subOccupancy || formData?.landInfo?.unit || {});
+  const [subOccupancyObject, setsubOccupancyObject] = useState(formData?.data?.subOccupancy || formData?.landInfo?.unit || {});
   // const [subOccupancyOption, setsubOccupancyOption] = useState([]);
   // const [floorData, setfloorData] = useState([]);
   // let scrutinyNumber = `DCR82021WY7QW`;
@@ -120,25 +120,23 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   // };
 
   const selectOccupancy = (e, data, num) => {
-    let blocks = subOccupancyObject;
-    let newSubOccupancy = [];
-    e &&
-      e?.map((ob) => {
-        newSubOccupancy.push(ob?.[1]);
-      });
-    blocks[`Block_${num}`] = newSubOccupancy;
-    // setsubOccupancy(newSubOccupancy);
-    setsubOccupancyObject(blocks);
+    let newSubOccupancy = e?.map((ob) => ob?.[1]) || [];
+  
+    setsubOccupancyObject((prev) => ({
+      ...prev,
+      [`Block_${num}`]: newSubOccupancy,
+    }));
   };
 
   const onRemove = (index, key, num) => {
-    let afterRemove = subOccupancyObject[`Block_${num}`].filter((value, i) => {
-      return i !== index;
+    setsubOccupancyObject((prev) => {
+      const updatedObject = { ...prev };
+      const blockKey = `Block_${num}`;
+  
+      updatedObject[blockKey] = prev[blockKey]?.filter((_, i) => i !== index) || [];
+  
+      return updatedObject;
     });
-    // setsubOccupancy(afterRemove);
-    let temp = subOccupancyObject;
-    temp[`Block_${num}`] = afterRemove;
-    setsubOccupancyObject(temp);
   };
 
   const accessData = React.useCallback((plot) => {
@@ -269,12 +267,13 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   };
 
 
-  const clearall = (num) => {
-    let res = [];
-    let temp = subOccupancyObject;
-    temp[`Block_${num}`] = res;
-    // setsubOccupancy(res);
-    setsubOccupancyObject(temp);
+  const clearAll = (num) => {
+    setsubOccupancyObject((prev) => {
+      const updatedObject = { ...prev };
+      updatedObject[`Block_${num}`] = [];
+  
+      return updatedObject;
+    });
   };
 
   function getSubOccupancyValues(index) {
@@ -403,7 +402,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             {!(checkingFlow === "OCBPA")
               ? subOccupancyObject[`Block_${block.number}`] &&
                 subOccupancyObject[`Block_${block.number}`].length > 0 && (
-                  <LinkButton style={{ textAlign: "left" }} label={"Clear All"} onClick={() => clearall(block.number)} />
+                  <LinkButton style={{ textAlign: "left" }} label={"Clear All"} onClick={() => clearAll(block.number)} />
                 )
               : null}
             <div style={{ marginTop: "20px" }}>
