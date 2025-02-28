@@ -120,15 +120,15 @@ import {
 
       function getFloorData(block){
         let floors = [];
-        block?.map((ob) => {
+        block?.map((ob, i) => {
             floors.push({
-                Floor:t(`BPA_FLOOR_NAME_${(ob.Level)}`),
+                Floor:t(`BPA_FLOOR_NAME_${(i)}`),
                 Level:ob.Level,
                 Occupancy:t(`${ob?.Occupancy}`),
                 BuildupArea:ob?.BuildupArea,
                 FloorArea:ob?.FloorArea || 0,
                 CarpetArea:ob?.CarpetArea || 0,
-                key:t(`BPA_FLOOR_NAME_${(ob.Level)}`),
+                key:t(`BPA_FLOOR_NAME_${(i)}`),
             });
         });
         return floors;

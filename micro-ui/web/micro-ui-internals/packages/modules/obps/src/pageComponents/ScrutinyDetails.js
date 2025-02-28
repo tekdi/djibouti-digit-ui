@@ -106,13 +106,13 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
 
       if (floorDifference > 0) {
         Array.from({ length: floorDifference }, (_, i) => ({
-          Floor: t(`BPA_FLOOR_NAME_${existingFloors.length + i + 1}`),
+          Floor: t(`BPA_FLOOR_NAME_${existingFloors.length + i}`),
           Level: existingFloors.length + i + 1,
           Occupancy: formData?.data?.occupancyType || t("Residential"),
           BuildupArea: 0.0,
           FloorArea: 0.0,
           CarpetArea: 0.0,
-          key: t(`BPA_FLOOR_NAME_${existingFloors.length + i + 1}`)
+          key: t(`BPA_FLOOR_NAME_${existingFloors.length + i}`)
         })).forEach(floor => newFloors.push(floor));
       } else {
         newFloors.length = numberOfFloor;
@@ -459,6 +459,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             </div>
           </div>}
         )}
+        {console.log(subOccupancyObject[`Block_Floor_${1}`]||[], "table")}
         <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
         <CardSubHeader style={{ fontSize: "20px" }}>{t("BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL")}</CardSubHeader>
         {/* <StatusTable style={{ border: "none" }}>
