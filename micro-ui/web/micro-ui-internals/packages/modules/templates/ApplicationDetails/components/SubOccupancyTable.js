@@ -99,7 +99,6 @@ const SubOccupancyTable = ({ edcrDetails, applicationData }) => {
 
         {applicationData?.buildingInfos?.map((block, index) => (
           <div key={index} style={applicationData?.buildingInfos?.length > 0 ? {marginBottom: "30px", background: "#FAFAFA", border: "1px solid #D6D5D4", padding: "8px", borderRadius: "4px", maxWidth: "950px", minWidth: "280px"} : {marginBottom: "30px"}}>
-            <CardSubHeader style={{ marginBottom: "8px", paddingBottom: "9px", color: "#0B0C0C", fontSize: "18px", lineHeight: "19px" }}>{t("BPA_BLOCK_SUBHEADER")} {index + 1}</CardSubHeader>
             <StatusTable>
               <Row className="border-none" textStyle={{wordBreak:"break-word"}} label={`${t("BPA_SUB_OCCUPANCY_LABEL")}`} text={getSubOccupancyValues(index)}></Row>
             </StatusTable>

@@ -34,6 +34,33 @@ const DocsRequired = ({ onSelect, onSkip, config }) => {
     onSelect("uiFlow", uiFlow);
   }
 
+  function getUniqueDocTypesByServiceType(list) {
+    if (!list) return
+    const serviceTypeMap = new Map();
+
+    list?.forEach(item => {
+        const serviceType = item.ServiceType;
+
+        if (!serviceTypeMap.has(serviceType)) {
+            serviceTypeMap.set(serviceType, new Map()); // Store unique doc types using Map
+        }
+
+        const docTypeSet = serviceTypeMap.get(serviceType);
+
+        item?.docTypes?.forEach(doc => {
+            if (!docTypeSet.has(doc.code)) {
+                docTypeSet.set(doc.code, doc); // Store only unique doc types
+            }
+        });
+    });
+
+    // Convert map to array of objects with unique docTypes for each serviceType
+    return Array.from(serviceTypeMap.entries()).map(([serviceType, docTypeSet]) => ({
+        serviceType,
+        docTypes: Array.from(docTypeSet.values()), // Convert map values to array
+    }));
+}
+
   useEffect(() => {
     let architectName = "", isDone = true;
     for (let i = 0; i < LicenseData?.Licenses?.length; i++) {
@@ -64,33 +91,8 @@ const DocsRequired = ({ onSelect, onSkip, config }) => {
 
   useEffect(() => {
     if (!isLoading) {
-      let unique = [], distinct = [], uniqueData = [], uniqueList = [];
-      const windowUrl = window.location.href.split('/');
-      const serviceType = windowUrl[windowUrl.length - 2];
-      const applicationType = windowUrl[windowUrl.length - 3];
-      for (let i = 0; i < data.length; i++) {
-        if (!unique[data[i].applicationType] && !unique[data[i].ServiceType]) {
-          distinct.push(data[i].applicationType);
-          unique[data[i].applicationType] = data[i];
-        }
-      }
-      Object.values(unique).map(indData => {
-        if (indData?.applicationType == applicationType?.toUpperCase() && indData?.ServiceType == serviceType?.toUpperCase()) {
-          uniqueList.push(indData?.docTypes);
-        }
-        uniqueList?.[0]?.forEach(doc => {
-          let code = doc.code; doc.dropdownData = [];
-          commonDocs?.["common-masters"]?.DocumentType?.forEach(value => {
-            let values = value.code.slice(0, code.length);
-            if (code === values) {
-              doc.hasDropdown = true;
-              value.i18nKey = value.code;
-              doc.dropdownData.push(value);
-            }
-          });
-        });
-        setDocsList(uniqueList);
-      })
+
+      setDocsList(getUniqueDocTypesByServiceType(data));
     }
   }, [!isLoading]);
 
@@ -110,19 +112,32 @@ const DocsRequired = ({ onSelect, onSkip, config }) => {
         {isLoading ?
           <Loader /> :
           <Fragment>
-            {docsList?.[0]?.map((doc, index) => (
-              <div>
+            
+            {docsList && docsList.map((item, index) => {
+              return <div>
+
                 <div style={{ fontWeight: 700, marginBottom: "8px" }} key={index}>
                   <div style={{ display: "flex" }}>
-                    <div>{`${index + 1}.`}&nbsp;</div>
-                    <div>{` ${t(doc?.code.replace('.', '_'))}`}</div>
+                    <div style={{ minWidth: "20px" }}>{`${index + 1}.`}&nbsp;</div>
+                    <div>{` ${t(`${item.serviceType.replace('.', '_')}`)}`}</div>
                   </div>
                 </div>
-                <div style={{marginBottom: "16px"}}>
-                  {doc?.dropdownData?.map((value, index) => doc?.dropdownData?.length !== index + 1 ? <span>{`${t(value?.i18nKey)}, `}</span> : <span>{`${t(value?.i18nKey)}`}</span> )}
+
+                <div style={{ marginBottom: "16px" }}>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div style={{ minWidth: "20px" }}></div>
+                    <ol style={{ margin: "0px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                      {item.docTypes.map((doc, i) => {
+                        return <li key={i} style={{ color: "#505A5F", fontSize: "16px", listStyleType: "none" }}>
+                          {`${i + 1}. ${t(`${doc?.code}`)}`}
+                        </li>
+                      })}
+                    </ol>
+                  </div>
                 </div>
               </div>
-            ))}
+            })}
+
           </Fragment>
         }
         <SubmitBar label={t(`CS_COMMON_NEXT`)} onSubmit={goNext} />
