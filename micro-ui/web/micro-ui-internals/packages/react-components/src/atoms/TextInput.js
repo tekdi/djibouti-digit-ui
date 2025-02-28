@@ -83,6 +83,7 @@ const TextInput = (props) => {
             autoFocus={props.autoFocus}
             onBlur={props.onBlur}
             onKeyPress={props.onKeyPress}
+            onKeyDown={props.onKeyDown}
             autoComplete="off"
             disabled={props.disabled}
             onWheel={(e) => e.target.blur()}

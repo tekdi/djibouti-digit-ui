@@ -64,10 +64,6 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
     config: {},
     withEDCRData: false,
   });
-  const { isLoading: isEDCRInboxLoading, data: { totalCount: edcrCount } = {} } = Digit.Hooks.obps.useEDCRInbox({
-    tenantId: stateCode,
-    filters: { filterForm: {}, searchForm: {}, tableForm: { limit: 10, offset: 0 } },
-  });
 
   useEffect(()=>{
     if (location.pathname === "/digit-ui/citizen/obps/home"){
@@ -144,7 +140,7 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
       isCitizen: true,
       kpis: [
         {
-          count: !(bpaLoading || isEDCRInboxLoading) && totalCount && edcrCount ? totalCount + edcrCount : "-",
+          count: !(bpaLoading) && totalCount,
           label: t("BPA_PDF_TOTAL"),
           link: `/digit-ui/citizen/obps/bpa/inbox`,
         },
@@ -154,11 +150,6 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
           count: !bpaLoading ? totalCount : "-",
           label: t("ES_COMMON_OBPS_INBOX_LABEL"),
           link: `/digit-ui/citizen/obps/bpa/inbox`,
-        },
-        {
-          count: !isEDCRInboxLoading ? edcrCount : "-",
-          label: t("ES_COMMON_EDCR_INBOX_LABEL"),
-          link: `/digit-ui/citizen/obps/edcr/inbox`,
         },
       ],
       className: "CitizenHomeCard",

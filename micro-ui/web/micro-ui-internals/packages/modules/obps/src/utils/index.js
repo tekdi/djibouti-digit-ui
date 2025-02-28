@@ -387,7 +387,7 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
       approvalNo: data?.approvalNo,
       accountId: data?.accountId,
       edcrNumber: data?.edcrNumber,
-      riskType: data?.riskType,
+      riskType: data?.data?.riskType,
       businessService: data?.businessService,
       landId: data?.landId,
       tenantId: data?.tenantId || data?.address?.tenantId,
@@ -409,11 +409,36 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
         GISPlaceName : data?.address?.placeName,
         holdingNo: data?.data?.holdingNumber ? data?.data?.holdingNumber : data?.additionalDetails?.holdingNo,
         registrationDetails: data?.data?.registrationDetails ? data?.data?.registrationDetails : data?.additionalDetails?.registrationDetails,
+        applicationType: data?.data?.applicationType,
+        serviceType: data?.data?.serviceType,
+        applicantName: data?.data?.applicantName,
+        demolitionArea: data?.data?.demolitionArea,
+        holdingNo: data?.data?.holdingNumber,
+        occupancyType: data?.data?.occupancyType,
+        registrationDetails: data?.data?.registrationDetails,
       },
-      applicationType: data?.additionalDetails?.applicationType,
-      serviceType: data?.additionalDetails?.serviceType,
-      plotInfo:data?.plotInfo,
-      buildingInfos: data?.buildingInfos
+      applicationType: data?.data?.applicationType,
+      serviceType: data?.data?.serviceType,
+      plotInfo: {
+        plotNumber: data?.data?.plotNumber,
+        plotArea: Number(data?.data?.plotArea),
+        khataNumber: data?.data?.khataNumber
+      },
+      buildingInfos: [
+        {
+          buildingHeight: Number(data?.data?.totalHeight),
+          numberOfFloors: Number(data?.data?.numberOfFloors),
+          totalBuiltupArea: Number(data?.data?.totalBuiltupArea),
+          floorInfos: data?.data?.subOccupancy?.Block_Floor_1?.map(floor => ({
+            buildupArea: Number(floor.BuildupArea),
+            carpetArea: Number(floor.CarpetArea),
+            floorArea: Number(floor.FloorArea),
+            floorName: floor.Floor,
+            level: Number(floor.Level),
+            usage: floor.Occupancy
+          }))
+        }
+      ]
     },
   };
 
