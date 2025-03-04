@@ -420,20 +420,23 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
       plotInfo: {
         plotNumber: data?.data?.plotNumber,
         plotArea: Number(data?.data?.plotArea),
-        khataNumber: data?.data?.khataNumber
+        khataNumber: data?.data?.khataNumber,
+        id:data?.plotInfo?.id
       },
       buildingInfos: [
         {
           buildingHeight: Number(data?.data?.totalHeight),
           numberOfFloors: Number(data?.data?.numberOfFloors),
           totalBuiltupArea: Number(data?.data?.totalBuiltupArea),
-          floorInfos: data?.data?.subOccupancy?.Block_Floor_1?.map(floor => ({
+          id:data?.buildingInfos[0]?.id,
+          floorInfos: data?.data?.subOccupancy?.Block_Floor_1?.map((floor,i) => ({
             buildupArea: Number(floor.BuildupArea),
             carpetArea: Number(floor.CarpetArea),
             floorArea: Number(floor.FloorArea),
             floorName: floor.Floor,
             level: Number(floor.Level),
-            usage: floor.Occupancy
+            usage: floor.Occupancy,
+            id:data?.buildingInfos[0]?.floorInfos[i]?.id,
           }))
         }
       ]
