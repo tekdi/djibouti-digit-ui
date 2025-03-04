@@ -72,7 +72,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   const [data] = useState({});
   const [numberOfFloor, setNumberOfFloor] = useState(formData?.data?.numberOfFloors || 0);
   const blocks = useMemo(() => [{ number: 1 }], []);
-  const activeCell = useRef(null);
+  const [activeCell, setActiveCell] = useState(null);
   const [tempValue, setTempValue] = useState("");
   const [demolitionArea, setDemolitionArea] = useState(formData?.data?.demolitionArea || "");
   const floorsInitialized = useRef(false); 
@@ -190,7 +190,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   };
   
   const renderEditableCell = (rowIndex, columnId, block) => {
-    const isActive = activeCell.current?.rowIndex === rowIndex && activeCell.current?.columnId === columnId;
+    const isActive = activeCell?.rowIndex === rowIndex && activeCell?.columnId === columnId;
 
     return isActive && !["Floor", "Level", "Occupancy"].includes(columnId) ? (
       <TextInput
@@ -200,13 +200,12 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         onChange={(e) => setTempValue(e.target.value)}
         onBlur={() => {
           updateData(rowIndex, columnId, tempValue);
-          activeCell.current = null;
+          setActiveCell(null);
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            e.preventDefault();
             updateData(rowIndex, columnId, tempValue);
-            activeCell.current = null;
+            setActiveCell(null);
           }
         }}
       />
@@ -214,7 +213,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
       <button
         style={{ margin: 0, padding: 0, background: "transparent", cursor: "pointer" }}
         onClick={() => {
-          activeCell.current = { rowIndex, columnId };
+          setActiveCell({ rowIndex, columnId });
           setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
         }}
       >
@@ -459,7 +458,6 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             </div>
           </div>}
         )}
-        {console.log(subOccupancyObject[`Block_Floor_${1}`]||[], "table")}
         <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
         <CardSubHeader style={{ fontSize: "20px" }}>{t("BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL")}</CardSubHeader>
         {/* <StatusTable style={{ border: "none" }}>

@@ -52,15 +52,15 @@ const SubOccupancyTable = ({ edcrDetails, applicationData }) => {
 
   function getFloorData(block) {
     let floors = [];
-    block?.floorInfos?.map((ob) => {
+    block?.floorInfos?.map((ob,i) => {
       floors.push({
-        Floor: t(`BPA_FLOOR_NAME_${ob.level}`),
+        Floor: t(ob.floorName),
         Level: ob.level,
         Occupancy: t(`${ob.usage}`),
         BuildupArea: ob.buildupArea,
         FloorArea: ob.floorArea || 0,
         CarpetArea: ob.carpetArea || 0,
-        key: t(`BPA_FLOOR_NAME_${ob.level}`),
+        key: t(ob.floorName),
       });
     });
     return floors;
