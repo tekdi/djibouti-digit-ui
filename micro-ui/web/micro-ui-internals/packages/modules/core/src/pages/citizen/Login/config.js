@@ -9,13 +9,14 @@ export const loginSteps = [
     inputs: [
       {
         label: "CORE_COMMON_MOBILE_NUMBER",
-        type: "text",
+        type: "number",
         name: "mobileNumber",
         error: "ERR_HRMS_INVALID_MOB_NO",
         validation: {
           required: true,
           minLength: 8,
           maxLength: 8,
+          pattern: /^77[0-9]{6}$/i
         },
       },
     ],
