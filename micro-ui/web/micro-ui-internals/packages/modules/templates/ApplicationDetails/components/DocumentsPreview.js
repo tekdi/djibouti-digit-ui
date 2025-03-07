@@ -11,7 +11,7 @@ function DocumentsPreview({ documents, svgStyles = {}, isSendBackFlow = false, i
             {!isStakeholderApplication && documents?.map((document, index) => (
                 <React.Fragment key={index}>
                     {document?.title ? <CardSubHeader style={titleStyles ? titleStyles : { marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader> : null}
-                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start", flexDirection:'column' }}>
                         {document?.values && document?.values.length > 0 ? document?.values?.map((value, index) => (
                             <a target="_" href={value?.url} style={{ minWidth: "80px", marginRight: "10px", maxWidth: "100px", height: "auto", minWidth: "100px" }} key={index}>
                                 <div style={{ display: "flex", justifyContent: "center" }}>

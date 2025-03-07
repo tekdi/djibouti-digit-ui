@@ -102,7 +102,7 @@ const SubOccupancyTable = ({ edcrDetails, applicationData }) => {
             <StatusTable>
               <Row className="border-none" textStyle={{wordBreak:"break-word"}} label={`${t("BPA_SUB_OCCUPANCY_LABEL")}`} text={getSubOccupancyValues(index)}></Row>
             </StatusTable>
-            <div style={window.location.href.includes("citizen") || isMobile?{overflow:"scroll"}:{ maxWidth: "950px", maxHeight: "280px" }}>
+            <div style={window.location.href.includes("citizen") || isMobile?{overflow:"scroll"}:{ maxWidth: "950px", maxHeight: "100%" }}>
               <Table
                 className="customTable table-fixed-first-column table-border-style"
                 t={t}
