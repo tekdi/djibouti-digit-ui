@@ -211,7 +211,18 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
       />
     ) : (
       <button
-        style={{ margin: 0, padding: 0, background: "transparent", cursor: "pointer" }}
+      style={{ 
+        margin: 0,
+        padding: 0,
+        background: "transparent",
+        cursor: "pointer",
+        ...(!["Floor", "Level", "Occupancy"].includes(columnId) && {
+          width: "100%",
+          border: "1px solid",
+          textAlign: "left",
+          padding:'8px'
+        })
+      }}
         onClick={() => {
           setActiveCell({ rowIndex, columnId });
           setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
