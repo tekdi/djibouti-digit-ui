@@ -18,7 +18,7 @@ function DocumentsPreview({ documents, svgStyles = {}, isSendBackFlow = false, i
                                     <PDFSvg />
                                 </div>
                                 <p style={{ marginTop: "8px", fontWeight: "bold", textAlign: "center", color: "#505A5F"  }}>{t(value?.documentType)}</p>
-                                {isSendBackFlow ? value?.documentType?.includes("NOC") ? <p style={{ textAlign: "center" }}>{t(value?.documentType)}</p> : <p style={{ textAlign: "center" }}>{t(value?.documentType)}</p> : ""}
+                                {isSendBackFlow && <p style={{ textAlign: "center" }}>{t(value?.documentType)}</p>}
                             </a>
                         )) : !(window.location.href.includes("citizen")) && <div><p>{t("BPA_NO_DOCUMENTS_UPLOADED_LABEL")}</p></div>}
                     </div>

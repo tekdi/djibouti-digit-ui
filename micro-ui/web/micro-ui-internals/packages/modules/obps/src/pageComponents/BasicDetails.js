@@ -167,7 +167,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
           <CardLabel>{t("BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL")}*</CardLabel>
           <Dropdown
             defaultValue={basicData?.applicationType}
-            select={(e) => handleChange({ name: "applicationType", value: e.code })}
+            select={(e) => handleChange({ name: "applicationType", value: (e.code).toUpperCase() })}
             selected={mdmsData?.BPA?.ApplicationType.find(item => item.code == basicData?.applicationType)}
             option={mdmsData?.BPA?.ApplicationType.filter(item => item.active) || []}
             optionKey="code"
@@ -189,12 +189,12 @@ const BasicDetails = ({ formData, onSelect, config }) => {
           <CardLabel>{t("BPA_BASIC_DETAILS_OCCUPANCY_LABEL")}*</CardLabel>
           <Dropdown
             defaultValue={basicData?.occupancyType}
-            select={(e) => handleChange({ name: "occupancyType", value: e.name })}
+            select={(e) => handleChange({ name: "occupancyType", value: (`BPA_OCCUPANACYTYPE_${e.code}`) })}
             option={mdmsData?.BPA?.OccupancyType || []}
-            optionKey="name"
+            optionKey="code"
             type="dropdown"
             t={t}
-            selected={mdmsData?.BPA?.OccupancyType.find(item => item.name == basicData?.occupancyType)}
+            selected={mdmsData?.BPA?.OccupancyType.find(item => (`BPA_OCCUPANACYTYPE_${item.code}`) == basicData?.occupancyType)}
           />
         </div>
 
@@ -202,7 +202,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
           <CardLabel>{t("BPA_BASIC_DETAILS_RISK_TYPE_LABEL")}*</CardLabel>
           <Dropdown
             defaultValue={basicData?.riskType}
-            select={(e) => handleChange({ name: "riskType", value: e.riskType })}
+            select={(e) => handleChange({ name: "riskType", value: e.riskType.toUpperCase() })}
             option={mdmsData?.BPA?.RiskTypeComputation || []}
             optionKey="riskType"
             type="dropdown"
