@@ -88,7 +88,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         ...prev,
         [blockKey]: existingFloors.map(floor => ({
           ...floor,
-          Occupancy: formData.data.occupancyType
+          Occupancy: t(formData.data.occupancyType)
         }))
       };
     });
@@ -108,7 +108,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         Array.from({ length: floorDifference }, (_, i) => ({
           Floor: t(`BPA_FLOOR_NAME_${existingFloors.length + i}`),
           Level: existingFloors.length + i + 1,
-          Occupancy: formData?.data?.occupancyType || t("Residential"),
+          Occupancy: t(formData?.data?.occupancyType) || t("Residential"),
           BuildupArea: 0.0,
           FloorArea: 0.0,
           CarpetArea: 0.0,
@@ -211,7 +211,18 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
       />
     ) : (
       <button
-        style={{ margin: 0, padding: 0, background: "transparent", cursor: "pointer" }}
+      style={{ 
+        margin: 0,
+        padding: 0,
+        background: "transparent",
+        cursor: "pointer",
+        ...(!["Floor", "Level", "Occupancy"].includes(columnId) && {
+          width: "100%",
+          border: "1px solid",
+          textAlign: "left",
+          padding:'8px'
+        })
+      }}
         onClick={() => {
           setActiveCell({ rowIndex, columnId });
           setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
@@ -285,6 +296,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
     } else {
       onSelect("data",{...data, demolitionArea, [config.key]:subOccupancyObject,
       });
+
     }
   };
 
