@@ -70,8 +70,6 @@ export const convertToNocObject = (data, datafromflow) => {
 };
 
 export const getBPAFormData = async (data, mdmsData, history, t) => {
-  const edcrResponse = await Digit.OBPSService.scrutinyDetails(data?.tenantId, { edcrNumber: data?.edcrNumber });
-  const APIScrutinyDetails = edcrResponse?.edcrDetail[0];
   const getBlockIds = (unit) => {
     let blocks = {};
     unit &&
@@ -108,19 +106,18 @@ export const getBPAFormData = async (data, mdmsData, history, t) => {
   data.address.locality["i18nkey"] = `${t(`${stringReplaceAll(data?.landInfo?.address?.tenantId,".","_").toUpperCase()}_REVENUE_${data?.landInfo?.address?.locality?.code}`)}`;
   data.placeName = data?.additionalDetails?.GISPlaceName || "";
   data.data = {
-    scrutinyNumber: { edcrNumber: APIScrutinyDetails?.edcrNumber },
-    applicantName: APIScrutinyDetails?.planDetail?.planInformation?.applicantName,
+    applicantName: data?.additionalDetails?.applicantName,
     applicationDate: data?.auditDetails?.createdTime,
-    applicationType: APIScrutinyDetails?.appliactionType,
+    applicationType: data?.additionalDetails?.applicationType,
     holdingNumber: data?.additionalDetails?.holdingNo,
-    occupancyType: APIScrutinyDetails?.planDetail?.planInformation?.occupancy,
+    occupancyType: data?.additionalDetails?.occupancyType,
     registrationDetails: data?.additionalDetails?.registrationDetails,
     riskType: Digit.Utils.obps.calculateRiskType(
       mdmsData?.BPA?.RiskTypeComputation,
-      APIScrutinyDetails?.planDetail?.plot?.area,
-      APIScrutinyDetails?.planDetail?.blocks
+      data?.plotInfo?.plotArea,
+      data?.buildingInfos
     ),
-    serviceType: data?.additionalDetails?.serviceType || APIScrutinyDetails?.applicationSubType,
+    serviceType: data?.additionalDetails?.serviceType,
   };
 
   data?.landInfo.owners.map((owner, ind) => {
@@ -142,14 +139,14 @@ export const getBPAFormData = async (data, mdmsData, history, t) => {
 
   data.riskType = Digit.Utils.obps.calculateRiskType(
     mdmsData?.BPA?.RiskTypeComputation,
-    APIScrutinyDetails?.planDetail?.plot?.area,
-    APIScrutinyDetails?.planDetail?.blocks
+    data?.plotInfo?.plotArea,
+    data?.buildingInfos
   );
   data.subOccupancy = getBlocksforFlow(data?.landInfo?.unit);
   data.uiFlow = {
     flow: data?.businessService.includes("OC") ? "OCBPA" : data?.businessService?.split(".")[0],
-    applicationType: data?.additionalDetails?.applicationType || APIScrutinyDetails?.appliactionType,
-    serviceType: data?.additionalDetails?.serviceType || APIScrutinyDetails?.applicationSubType,
+    applicationType: data?.additionalDetails?.applicationType,
+    serviceType: data?.additionalDetails?.serviceType,
   };
 
   if (data?.businessService.includes("OC")) {
