@@ -11,7 +11,7 @@ const getPath = (path, params) => {
   return path;
 }
 
-const getBPAEditDetails = async (data, APIScrutinyDetails,mdmsData,nocdata,t) => {
+const getBPAEditDetails = async (data,mdmsData,nocdata,t) => {
 
   const getBlockIds = (unit) => {
     let blocks = {};
@@ -47,15 +47,14 @@ const getBPAEditDetails = async (data, APIScrutinyDetails,mdmsData,nocdata,t) =>
   data.address.city = { code:data?.landInfo?.address?.city, name:data?.landInfo?.address?.city?.split(".")[1]}
   data.address.locality = {...data?.landInfo?.address?.locality, "i18nkey":data?.landInfo?.address?.locality?.name}
   data.data = {
-    applicantName: APIScrutinyDetails?.planDetail?.planInformation?.applicantName,
+    applicantName: data?.additionalDetails?.applicantName,
     applicationDate: data?.auditDetails?.createdTime,
-    applicationType: APIScrutinyDetails?.appliactionType,
+    applicationType: data?.additionalDetails?.applicationType,
     holdingNumber: data?.additionalDetails?.holdingNo,
-    occupancyType: APIScrutinyDetails?.planDetail?.planInformation?.occupancy,
+    occupancyType: data?.additionalDetails?.occupancyType,
     registrationDetails: data?.additionalDetails?.registrationDetails,
-    riskType: Digit.Utils.obps.calculateRiskType(mdmsData?.BPA?.RiskTypeComputation, APIScrutinyDetails?.planDetail?.plot?.area, APIScrutinyDetails?.planDetail?.blocks),
-    serviceType:data?.additionalDetails?.serviceType || APIScrutinyDetails?.applicationSubType,
-    scrutinyNumber:{edcrNumber:data?.edcrNumber}
+    riskType: Digit.Utils.obps.calculateRiskType(mdmsData?.BPA?.RiskTypeComputation, data?.plotInfo?.plotArea, data?.buildingInfos),
+    serviceType:data?.additionalDetails?.serviceType,
   }
 
   data["PrevStateDocuments"] = data?.documents;
@@ -94,12 +93,12 @@ const getBPAEditDetails = async (data, APIScrutinyDetails,mdmsData,nocdata,t) =>
     }
   }
 
-  data.riskType = Digit.Utils.obps.calculateRiskType(mdmsData?.BPA?.RiskTypeComputation, APIScrutinyDetails?.planDetail?.plot?.area, APIScrutinyDetails?.planDetail?.blocks)
+  data.riskType = Digit.Utils.obps.calculateRiskType(mdmsData?.BPA?.RiskTypeComputation, data?.plotInfo?.plotArea, data?.buildingInfos)
   data.subOccupancy = getBlocksforFlow(data?.landInfo?.unit);
   data.uiFlow = {
     flow:data?.businessService?.split(".")?.[0],
-    applicationType:data?.additionalDetails?.applicationType || APIScrutinyDetails?.appliactionType,
-    serviceType:data?.additionalDetails?.serviceType || APIScrutinyDetails?.applicationSubType
+    applicationType:data?.additionalDetails?.applicationType,
+    serviceType:data?.additionalDetails?.serviceType
   }
   sessionStorage.setItem("BPA_IS_ALREADY_WENT_OFF_DETAILS", JSON.stringify(true));
   return data;
@@ -144,19 +143,19 @@ const BPASendToArchitect = ({ parentRoute }) => {
   useEffect(async () => {
     let isAlready = sessionStorage.getItem("BPA_IS_ALREADY_WENT_OFF_DETAILS");
     isAlready = isAlready ? JSON.parse(isAlready) : true;
-    if (!isAlready && !isNocLoading && !isBpaSearchLoading && !isLoading) {
+    if (!isAlready && !isNocLoading && !isBpaSearchLoading) {
       application = bpaData ? bpaData[0]:{};
-      if (data1 && nocdata) {
+      if (nocdata) {
        application = bpaData[0];
         if (editApplication) {
           application.isEditApplication = true;
         }
         sessionStorage.setItem("bpaInitialObject", JSON.stringify({ ...application }));
-        let bpaEditDetails = await getBPAEditDetails(application,data1,mdmsData,nocdata,t);
+        let bpaEditDetails = await getBPAEditDetails(application,mdmsData,nocdata,t);
         setParams({ ...params, ...bpaEditDetails });
       }
     }
-  }, [bpaData,data1,mdmsData,nocdata]);
+  }, [bpaData,mdmsData,nocdata]);
 
 
   const goNext = (skipStep) => {
@@ -222,7 +221,7 @@ const BPASendToArchitect = ({ parentRoute }) => {
         <OBPSAcknowledgement data={params} onSuccess={onSuccess} />
       </Route>
       <Route>
-        {data1 && <Redirect to={`${getPath(match.path, match.params)}/${config.indexRoute}`} />}
+        {<Redirect to={`${getPath(match.path, match.params)}/${config.indexRoute}`} />}
       </Route>
     </Switch>
   );

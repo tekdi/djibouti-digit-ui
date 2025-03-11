@@ -60,7 +60,7 @@ const NOCDetails = ({ t, config, onSelect, userType, formData, setError: setForm
     useEffect(() => {
         if (nocDatils?.length && nocDocumentTypeMaping?.length) {
             let documents = [];
-            nocDatils.map(noc => {
+             nocDatils?.length > 0 &&  nocDatils?.map(noc => {
                 const filteredData = nocDocumentTypeMaping.filter(data => (data.applicationType === noc.applicationType && data.nocType === noc.nocType))
                 if (filteredData?.[0]?.docTypes?.[0]) {
                     filteredData[0].docTypes[0].nocType = filteredData[0].nocType;
@@ -100,7 +100,7 @@ const NOCDetails = ({ t, config, onSelect, userType, formData, setError: setForm
             }
             documentsList.forEach(data => {
                 data.code = data.documentType;
-                data.dropdownData.forEach(dpData => {
+                data?.dropdownData?.forEach(dpData => {
                     dpData.i18nKey = dpData.code;
                 })
             })
@@ -216,7 +216,7 @@ function SelectDocument({
       }
 
     useEffect(() => {
-        if (selectedDocument?.documentType && (( nocDocuments.filter((ob) => ob.documentType === selectedDocument?.documentType)).length == 0 || ((newArray.filter((ob) => ob?.file?.documentType === selectedDocument?.documentType)).length) !== (nocDocuments.filter((ob) => ob.documentType === selectedDocument?.documentType)).length)) {
+        if (selectedDocument?.documentType && (( nocDocuments?.filter((ob) => ob.documentType === selectedDocument?.documentType)).length == 0 || ((newArray.filter((ob) => ob?.file?.documentType === selectedDocument?.documentType)).length) !== (nocDocuments.filter((ob) => ob.documentType === selectedDocument?.documentType)).length)) {
             setNocDocuments((prev) => {
                 //const filteredDocumentsByDocumentType = prev?.filter((item) => item?.documentType !== selectedDocument?.code);
 
@@ -240,7 +240,7 @@ function SelectDocument({
 
     const uploadedFilesPreFill = useMemo(()=>{
         let selectedUplDocs=[];
-        const key = selectedDocument.code/* .split(".",2).join(".").replaceAll(".", "_") */
+        const key = selectedDocument?.code/* .split(".",2).join(".").replaceAll(".", "_") */
         formData?.nocDocuments?.nocDocuments?.filter((ob) => ob.documentType === key).forEach(e =>
             selectedUplDocs.push([e.fileName, {file: {name: e.fileName, type: e.documentType}, fileStoreId: {fileStoreId: e.fileStoreId, tenantId}}])
              )
@@ -260,7 +260,7 @@ function SelectDocument({
            {!(window.location.href.includes("sendbacktocitizen")) && <MultiUploadWrapper
             module="BPA"
             tenantId={tenantId}
-            getFormState={e => getData(e,/* doc?.documentType?.replaceAll(".", "_") */doc.dropdownData[0].code)}
+            getFormState={e => getData(e,/* doc?.documentType?.replaceAll(".", "_") */doc?.dropdownData[0]?.code)}
             setuploadedstate={uploadedFilesPreFill}
             t={t}
             allowedFileTypesRegex={allowedFileTypes}

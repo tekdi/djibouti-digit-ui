@@ -22,7 +22,8 @@ import {
     else if(value.businessService === "BPA")
     BusinessService="BPA.NC_APP_FEE";
 
-    const { data, address, owners, nocDocuments, documents, additionalDetails,PrevStateDocuments,PrevStateNocDocuments,applicationNo } = value;
+    const { data, address, owners, nocDocuments, documents, additionalDetails,PrevStateDocuments,PrevStateNocDocuments,applicationNo, plotInfo, buildingInfos } = value;
+
     const isEditApplication = window.location.href.includes("editApplication");
     
       // for application documents
@@ -123,11 +124,11 @@ import {
         block?.map((ob, i) => {
             floors.push({
                 Floor:t(`BPA_FLOOR_NAME_${(i)}`),
-                Level:ob.Level,
-                Occupancy:t(`${ob?.Occupancy}`),
-                BuildupArea:ob?.BuildupArea,
-                FloorArea:ob?.FloorArea || 0,
-                CarpetArea:ob?.CarpetArea || 0,
+                Level:ob?.Level || ob?.level,
+                Occupancy:t(`${ob?.Occupancy || ob?.usage}`),
+                BuildupArea: ob?.BuildupArea || ob?.buildupArea,
+                FloorArea:ob?.FloorArea || ob?.floorArea || 0,
+                CarpetArea:ob?.CarpetArea || ob?.carpetArea || 0,
                 key:t(`BPA_FLOOR_NAME_${(i)}`),
             });
         });
@@ -167,7 +168,9 @@ import {
     <Card style={{paddingRight:"16px"}}>
     <CardHeader>{t(`BPA_BASIC_DETAILS_TITLE`)}</CardHeader>
         <StatusTable>
-          <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APP_DATE_LABEL`)} text={data?.applicationDate?.includes("-") ? format(new Date(data?.applicationDate), "dd/MM/yyyy") : convertEpochToDateDMY(Number(data?.applicationDate))} />
+          <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APP_DATE_LABEL`)} text={typeof data?.applicationDate === "string" && data.applicationDate.includes("-") 
+      ? format(new Date(data.applicationDate), "dd/MM/yyyy") 
+      : convertEpochToDateDMY(Number(data?.applicationDate))} />
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL`)} text={data?.applicantName} />
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL`)} text={t(`WF_BPA_${data?.applicationType}`)}/>
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL`)} text={t(data?.serviceType)} />
@@ -183,11 +186,13 @@ import {
           style={{ width: "100px", display:"inline" }}
           onClick={() => routeTo(`${routeLink}/plot-details`)}
         />
-          <Row className="border-none" textStyle={{paddingLeft:"12px"}} label={t(`BPA_BOUNDARY_PLOT_AREA_LABEL`)} text={data?.plotArea ? `${data?.plotArea} ${t(`BPA_SQ_FT_LABEL`)}` : t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={data?.plotNumber || t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_KHATHA_NUMBER_LABEL`)} text={data?.khataNumber || t("CS_NA")}/>
-          <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={data?.holdingNumber || t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={data?.registrationDetails || t("CS_NA")} />
+            <Row className="border-none" textStyle={{ paddingLeft: "12px" }} label={t(`BPA_BOUNDARY_PLOT_AREA_LABEL`)} text={data?.plotArea || plotInfo?.plotArea
+              ? `${data?.plotArea || plotInfo?.plotArea} ${t(`BPA_SQ_MTRS_LABEL`)}`
+              : t("CS_NA")} />
+            <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={data?.plotNumber || plotInfo?.plotNumber || t("CS_NA")} />
+            <Row className="border-none" label={t(`BPA_KHATHA_NUMBER_LABEL`)} text={data?.khataNumber || additionalDetails?.khataNumber || t("CS_NA")} />
+            <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={data?.holdingNumber || additionalDetails?.holdingNumber || t("CS_NA")} />
+            <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={data?.registrationDetails || additionalDetails?.registrationDetails || t("CS_NA")} />
     </StatusTable>
     </Card>
     <Card style={{paddingRight:"16px"}}>
@@ -211,13 +216,13 @@ import {
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_BUILDING_EXTRACT_HEADER")}</CardSubHeader>
       <StatusTable>
-      <Row className="border-none" label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")} text={`${data?.totalBuiltupArea} ${t("BPA_SQ_MTRS_LABEL")}`}></Row>
-      <Row className="border-none" label={t("BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL")} text={data?.numberOfFloors}></Row>
-      <Row className="border-none" label={t("BPA_HEIGHT_FROM_GROUND_LEVEL_FROM_MUMTY")} text={`${data?.totalHeight} ${t("BPA_MTRS_LABEL")}`}></Row>
+            <Row className="border-none" label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")} text={`${data?.totalBuiltupArea || buildingInfos[0]?.totalBuiltupArea} ${t("BPA_SQ_MTRS_LABEL")}`}></Row>
+            <Row className="border-none" label={t("BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL")} text={data?.numberOfFloors || buildingInfos[0]?.numberOfFloors}></Row>
+            <Row className="border-none" label={t("BPA_HEIGHT_FROM_GROUND_LEVEL_FROM_MUMTY")} text={`${data?.totalHeight || buildingInfos[0]?.buildingHeight} ${t("BPA_MTRS_LABEL")}`}></Row>
       </StatusTable>
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>
-      <div style={data?.subOccupancy?.Block_Floor_1?.length > 1 ?{ marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
+          <div style={(data?.subOccupancy?.Block_Floor_1?.length > 1 || buildingInfos[0]?.floorInfos?.length > 1) ? { marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
       {/* <CardSubHeader style={{marginTop:"15px", fontSize: "18px"}}>{t("BPA_BLOCK_SUBHEADER")} {index+1}</CardSubHeader> */}
       <StatusTable >
       <Row className="border-none" textStyle={{wordBreak:"break-word"}} label={t("BPA_SUB_OCCUPANCY_LABEL")} text={getBlockSubOccupancy() === ""?t("CS_NA"):getBlockSubOccupancy()}></Row>
@@ -231,7 +236,7 @@ import {
         manualPagination={false}
         isPaginationRequired={false}
         initSortId="S N "
-        data={getFloorData(data?.subOccupancy?.Block_Floor_1)}
+        data={getFloorData(data?.subOccupancy?.Block_Floor_1 || buildingInfos[0]?.floorInfos)}
         columns={tableColumns}
         getCellProps={(cellInfo) => {
           return {
@@ -244,7 +249,11 @@ import {
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL")}</CardSubHeader>
       <StatusTable  style={{border:"none"}}>
-      <Row className="border-none" label={t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")} text={data?.demolitionArea ? `${data?.demolitionArea} ${t("BPA_SQ_MTRS_LABEL")}` : t("CS_NA")}></Row>
+      <Row className="border-none" label={t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")} text={
+    data?.demolitionArea || additionalDetails?.demolitionArea 
+      ? `${data?.demolitionArea || additionalDetails?.demolitionArea} ${t("BPA_SQ_MTRS_LABEL")}` 
+      : t("CS_NA")
+  }></Row>
       </StatusTable>
       </Card>
       <Card style={{paddingRight:"16px"}}>
