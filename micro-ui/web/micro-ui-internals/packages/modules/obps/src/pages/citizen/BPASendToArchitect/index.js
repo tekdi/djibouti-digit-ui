@@ -128,11 +128,6 @@ const BPASendToArchitect = ({ parentRoute }) => {
 
   const { data: bpaData, isLoading: isBpaSearchLoading } = Digit.Hooks.obps.useBPASearch(tenantId, {applicationNo:applicationNo});
 
-  let scrutinyNumber = {edcrNumber:bpaData?.[0]?.edcrNumber};
-
-  const { data: data1, isLoading, refetch } = Digit.Hooks.obps.useScrutinyDetails(Digit.ULBService.getStateId(), scrutinyNumber, {
-    enabled: scrutinyNumber["edcrNumber"]?true:false
-  })
 
   let sourceRefId = applicationNo;
 
@@ -199,7 +194,7 @@ const BPASendToArchitect = ({ parentRoute }) => {
   const CheckPage = Digit?.ComponentRegistryService?.getComponent('BPACheckPage') ;
   const OBPSAcknowledgement = Digit?.ComponentRegistryService?.getComponent('BPAAcknowledgement');
 
-  if (isNocLoading || isBpaSearchLoading || isLoading) {
+  if (isNocLoading || isBpaSearchLoading) {
     return <Loader />
   }
 

@@ -126,7 +126,7 @@ import {
                 Floor:t(`BPA_FLOOR_NAME_${(i)}`),
                 Level:ob?.Level || ob?.level,
                 Occupancy:t(`${ob?.Occupancy || ob?.usage}`),
-                BuildupArea: ob?.BuildupArea || ob?.buildupArea,
+                BuildupArea: ob?.BuildupArea || ob?.buildupArea || 0,
                 FloorArea:ob?.FloorArea || ob?.floorArea || 0,
                 CarpetArea:ob?.CarpetArea || ob?.carpetArea || 0,
                 key:t(`BPA_FLOOR_NAME_${(i)}`),
@@ -216,13 +216,13 @@ import {
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_BUILDING_EXTRACT_HEADER")}</CardSubHeader>
       <StatusTable>
-            <Row className="border-none" label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")} text={`${data?.totalBuiltupArea || buildingInfos[0]?.totalBuiltupArea} ${t("BPA_SQ_MTRS_LABEL")}`}></Row>
-            <Row className="border-none" label={t("BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL")} text={data?.numberOfFloors || buildingInfos[0]?.numberOfFloors}></Row>
-            <Row className="border-none" label={t("BPA_HEIGHT_FROM_GROUND_LEVEL_FROM_MUMTY")} text={`${data?.totalHeight || buildingInfos[0]?.buildingHeight} ${t("BPA_MTRS_LABEL")}`}></Row>
+            <Row className="border-none" label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")} text={`${data?.totalBuiltupArea || buildingInfos?.[0]?.totalBuiltupArea} ${t("BPA_SQ_MTRS_LABEL")}`}></Row>
+            <Row className="border-none" label={t("BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL")} text={data?.numberOfFloors || buildingInfos?.[0]?.numberOfFloors}></Row>
+            <Row className="border-none" label={t("BPA_HEIGHT_FROM_GROUND_LEVEL_FROM_MUMTY")} text={`${data?.totalHeight || buildingInfos?.[0]?.buildingHeight} ${t("BPA_MTRS_LABEL")}`}></Row>
       </StatusTable>
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>
-          <div style={(data?.subOccupancy?.Block_Floor_1?.length > 1 || buildingInfos[0]?.floorInfos?.length > 1) ? { marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
+          <div style={(data?.subOccupancy?.Block_Floor_1?.length > 1 || buildingInfos?.[0]?.floorInfos?.length > 1) ? { marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
       {/* <CardSubHeader style={{marginTop:"15px", fontSize: "18px"}}>{t("BPA_BLOCK_SUBHEADER")} {index+1}</CardSubHeader> */}
       <StatusTable >
       <Row className="border-none" textStyle={{wordBreak:"break-word"}} label={t("BPA_SUB_OCCUPANCY_LABEL")} text={getBlockSubOccupancy() === ""?t("CS_NA"):getBlockSubOccupancy()}></Row>
@@ -236,7 +236,7 @@ import {
         manualPagination={false}
         isPaginationRequired={false}
         initSortId="S N "
-        data={getFloorData(data?.subOccupancy?.Block_Floor_1 || buildingInfos[0]?.floorInfos)}
+        data={getFloorData(data?.subOccupancy?.Block_Floor_1 || buildingInfos?.[0]?.floorInfos)}
         columns={tableColumns}
         getCellProps={(cellInfo) => {
           return {

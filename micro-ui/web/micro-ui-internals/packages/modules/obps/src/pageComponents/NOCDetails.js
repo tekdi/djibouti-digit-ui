@@ -133,7 +133,7 @@ const NOCDetails = ({ t, config, onSelect, userType, formData, setError: setForm
                     onSkip={onSkip}
                     onAdd={onAdd}
                 >
-                    {nocTaxDocuments?.map((document, index) => {
+                    {!isLoading ? nocTaxDocuments?.map((document, index) => {
                         return (
                             <SelectDocument
                                 key={index}
@@ -149,7 +149,7 @@ const NOCDetails = ({ t, config, onSelect, userType, formData, setError: setForm
                                 pdfLoading={pdfLoading}
                             />
                         );
-                    })}
+                    })   :  <Loader/>}
                     {error && <Toast label={error} onClose={() => setError(null)} error />}
                 </FormStep> : <Loader />}
         </div>
