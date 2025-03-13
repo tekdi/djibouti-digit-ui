@@ -180,7 +180,7 @@ const componentsToRegister = {
 
   //Components
   WSInbox,
-  BillAmendmentCard,
+  // BillAmendmentCard,
   WSSearchApplication: SearchApplication,
   WSSearchWaterConnection: SearchWaterConnection,
   WSCard,

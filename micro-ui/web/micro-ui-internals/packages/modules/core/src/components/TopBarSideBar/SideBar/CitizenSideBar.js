@@ -248,7 +248,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
       profileItem={profileItem}
       onClose={closeSidebar}
       isSideBarScroll={isSideBarScroll}
-      menuItems={menuItems}
+      menuItems={menuItems.filter(items=>items.text !== "Bills accounting")}
       Footer={<PoweredBy />}
       isEmployee={isEmployee}
       search={search}
