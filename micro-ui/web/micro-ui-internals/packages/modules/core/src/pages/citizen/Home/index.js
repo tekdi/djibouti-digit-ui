@@ -72,11 +72,11 @@ const Home = () => {
         Icon: <PTIcon className="fill-path-primary-main" />,
         onClick: () => history.push("/digit-ui/citizen/obps-home"),
       },
-      {
-        name: t("ACTION_TEST_BILLS"),
-        Icon: <DocumentIcon />,
-        onClick: () => history.push("/digit-ui/citizen/bills-home"),
-      },
+      // {
+      //   name: t("ACTION_TEST_BILLS"),
+      //   Icon: <DocumentIcon />,
+      //   onClick: () => history.push("/digit-ui/citizen/bills-home"),
+      // },
       // {
       //   name: t(citizenServicesObj?.props?.[2]?.label),
       //   Icon: <CaseIcon className="fill-path-primary-main" />,

@@ -153,6 +153,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   menuItems = menuItems.filter((item) => item.element !== "LANGUAGE");
 
   const MenuItem = ({ item }) => {
+    if(item?.text === "Bills accounting") return null;
     const leftIconArray = item?.icon || item.icon?.type?.name;
     const leftIcon = leftIconArray ? IconsObject[leftIconArray] : IconsObject.BillsIcon;
     let itemComponent;
