@@ -41,7 +41,7 @@ const checkIfAllValidFiles = (files, regex, maxSize, t) => {
 }
 
 // can use react hook form to set validations @neeraj-egov
-const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.getStateId(), getFormState, requestSpecifcFileRemoval, extraStyleName="",setuploadedstate = [], showHintBelow, hintText, allowedFileTypesRegex=/(.*?)(jpg|jpeg|webp|aif|png|image|pdf|msword|openxmlformats-officedocument)$/i, allowedMaxSizeInMB=10, acceptFiles = "image/*, .jpg, .jpeg, .webp, .aif, .png, .image, .pdf, .msword, .openxmlformats-officedocument, .dxf" }) => {
+const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.getStateId(), getFormState,setIsUploading, requestSpecifcFileRemoval, extraStyleName="",setuploadedstate = [], showHintBelow, hintText, allowedFileTypesRegex=/(.*?)(jpg|jpeg|webp|aif|png|image|pdf|msword|openxmlformats-officedocument)$/i, allowedMaxSizeInMB=10, acceptFiles = "image/*, .jpg, .jpeg, .webp, .aif, .png, .image, .pdf, .msword, .openxmlformats-officedocument, .dxf" }) => {
     const FILES_UPLOADED = "FILES_UPLOADED"
     const TARGET_FILE_REMOVAL = "TARGET_FILE_REMOVAL"
 
@@ -75,6 +75,7 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
         setFileErrors([])
         const files = Array.from(e.target.files);
         if (!files.length) return;
+        setIsUploading(true);
         const [validationMsg, error] = checkIfAllValidFiles(files, allowedFileTypesRegex, allowedMaxSizeInMB, t);
         if (!error) {
             try {
@@ -82,8 +83,12 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
                 return dispatch({ type: FILES_UPLOADED, payload: { files: e.target.files, fileStoreIds } })
             } catch (err) {
             }
+            finally {
+                setIsUploading(false);
+            }
         } else {
             setFileErrors(validationMsg)
+            setIsUploading(false);
         }
     }
     const [state, dispatch] = useReducer(uploadReducer, [...setuploadedstate])
