@@ -248,7 +248,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
       profileItem={profileItem}
       onClose={closeSidebar}
       isSideBarScroll={isSideBarScroll}
-      menuItems={menuItems.filter(items=>items.text !== "Bills accounting")}
+      menuItems={menuItems.filter(items=>items.link !== "/digit-ui/citizen/bills-home")}
       Footer={<PoweredBy />}
       isEmployee={isEmployee}
       search={search}
