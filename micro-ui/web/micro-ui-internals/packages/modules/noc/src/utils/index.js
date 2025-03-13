@@ -27,16 +27,43 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
 export const businessServiceList = (isCode= false) => {
     let isSearchScreen = window.location.href.includes("/search");
     const availableBusinessServices = [{
-        code: isSearchScreen ? "FIRE_NOC" : "FIRE_NOC_SRV",
+        code: isSearchScreen ? "MD_NOC" : "MD_NOC_SRV",
         active: true,
-        roles: ["FIRE_NOC_APPROVER"],
-        i18nKey: "WF_FIRE_NOC_FIRE_NOC_SRV",
+        roles: ["MD_NOC_APPROVER"],
+        i18nKey: "WF_MD_NOC_MD_NOC_SRV",
     }, {
-        code: isSearchScreen ? "AIRPORT_AUTHORITY" : "AIRPORT_NOC_SRV",
+        code: isSearchScreen ? "DDCF_NOC" : "DDCF_NOC_SRV",
         active: true,
-        roles: ["AIRPORT_AUTHORITY_APPROVER"],
-        i18nKey: "WF_FIRE_NOC_AIRPORT_NOC_SRV"
-    }];
+        roles: ["DDCF_NOC_APPROVER"],
+        i18nKey: "WF_DDCF_NOC_DDCF_NOC_SRV"
+    }, {
+        code: isSearchScreen ? "DNPC_NOC" : "DNPC_NOC_SRV",
+        active: true,
+        roles: ["DNPC_NOC_APPROVER"],
+        i18nKey: "WF_DNPC_NOC_DNPC_NOC_SRV"
+    }, {
+        code: isSearchScreen ? "INSPD_NOC" : "INSPD_NOC_SRV",
+        active: true,
+        roles: ["INSPD_NOC_APPROVER"],
+        i18nKey: "WF_INSPD_NOC_INSPD_NOC_SRV"
+    }, {
+        code: isSearchScreen ? "EDD_NOC" : "EDD_NOC_SRV",
+        active: true,
+        roles: ["EDD_NOC_APPROVER"],
+        i18nKey: "WF_EDD_NOC_EDD_NOC_SRV"
+    }, {
+        code: isSearchScreen ? "ONEAD_NOC" : "ONEAD_NOC_SRV",
+        active: true,
+        roles: ["ONEAD_NOC_APPROVER"],
+        i18nKey: "WF_ONEAD_NOC_ONEAD_NOC_SRV"
+    }, {
+        code: isSearchScreen ? "DTELECOM_NOC" : "DTELECOM_NOC_SRV",
+        active: true,
+        roles: ["DTELECOM_NOC_APPROVER"],
+        i18nKey: "WF_DTELECOM_NOC_DTELECOM_NOC_SRV"
+    }
+
+];
 
     const newAvailableBusinessServices = [];
     const loggedInUserRoles = Digit.UserService.getUser().info.roles;
