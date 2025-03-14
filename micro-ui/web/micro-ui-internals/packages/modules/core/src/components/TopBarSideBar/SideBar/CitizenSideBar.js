@@ -174,67 +174,68 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
             link: linkData[key][0]?.sidebarURL,
           });
       });
-  } else {
-    data?.actions
-      .filter((e) => e.url === "url" && e.displayName !== "Home")
-      .forEach((item) => {
-        if (search == "" && item.path !== "") {
-          let index = item.path.split(".")[0];
-          if (index === "TradeLicense") index = "Trade License";
-          if (!configEmployeeSideBar[index]) {
-            configEmployeeSideBar[index] = [item];
-          } else {
-            configEmployeeSideBar[index].push(item);
-          }
-        } else if (item.path !== "" && item?.displayName?.toLowerCase().includes(search.toLowerCase())) {
-          let index = item.path.split(".")[0];
-          if (index === "TradeLicense") index = "Trade License";
-          if (!configEmployeeSideBar[index]) {
-            configEmployeeSideBar[index] = [item];
-          } else {
-            configEmployeeSideBar[index].push(item);
-          }
-        }
-      });
-    const keys = Object.keys(configEmployeeSideBar);
-    for (let i = 0; i < keys.length; i++) {
-      const getSingleDisplayName = configEmployeeSideBar[keys[i]][0]?.displayName?.toUpperCase()?.replace(/[ -]/g, "_");
-      const getParentDisplayName = keys[i]?.toUpperCase()?.replace(/[ -]/g, "_");
+  } 
+  // else {
+  //   data?.actions
+  //     .filter((e) => e.url === "url" && e.displayName !== "Home")
+  //     .forEach((item) => {
+  //       if (search == "" && item.path !== "") {
+  //         let index = item.path.split(".")[0];
+  //         if (index === "TradeLicense") index = "Trade License";
+  //         if (!configEmployeeSideBar[index]) {
+  //           configEmployeeSideBar[index] = [item];
+  //         } else {
+  //           configEmployeeSideBar[index].push(item);
+  //         }
+  //       } else if (item.path !== "" && item?.displayName?.toLowerCase().includes(search.toLowerCase())) {
+  //         let index = item.path.split(".")[0];
+  //         if (index === "TradeLicense") index = "Trade License";
+  //         if (!configEmployeeSideBar[index]) {
+  //           configEmployeeSideBar[index] = [item];
+  //         } else {
+  //           configEmployeeSideBar[index].push(item);
+  //         }
+  //       }
+  //     });
+  //   const keys = Object.keys(configEmployeeSideBar);
+  //   for (let i = 0; i < keys.length; i++) {
+  //     const getSingleDisplayName = configEmployeeSideBar[keys[i]][0]?.displayName?.toUpperCase()?.replace(/[ -]/g, "_");
+  //     const getParentDisplayName = keys[i]?.toUpperCase()?.replace(/[ -]/g, "_");
 
-      if (configEmployeeSideBar[keys[i]][0].path.indexOf(".") === -1) {
-        menuItems.splice(1, 0, {
-          type: "link",
-          text: t(`ACTION_TEST_${getSingleDisplayName}`),
-          link: configEmployeeSideBar[keys[i]][0]?.navigationURL,
-          icon: configEmployeeSideBar[keys[i]][0]?.leftIcon?.split?.(":")[1],
-          populators: {
-            onClick: () => {
-              history.push(configEmployeeSideBar[keys[i]][0]?.navigationURL);
-              closeSidebar();
-            },
-          },
-        });
-      } else {
-        menuItems.splice(1, 0, {
-          type: "dynamic",
-          moduleName: t(`ACTION_TEST_${getParentDisplayName}`),
-          links: configEmployeeSideBar[keys[i]]?.map((ob) => {return {...ob, displayName: t(`ACTION_TEST_${ob?.displayName?.toUpperCase()?.replace(/[ -]/g, "_")}`)}}),
-          icon: configEmployeeSideBar[keys[i]][1]?.leftIcon,
-        });
-      }
-    }
-     const indx = menuItems.findIndex(a => a.element === "HOME");
-     const home = menuItems.splice(indx,1);
-     const comp = menuItems.findIndex(a => a.element === "LANGUAGE");
-     const part = menuItems.splice(comp,menuItems?.length-comp);
-     menuItems.sort((a,b) => {
-      let c1 = a?.type === "dynamic" ? a?.moduleName : a?.text;
-      let c2 = b?.type === "dynamic" ? b?.moduleName : b?.text;
-      return c1.localeCompare(c2)
-     } );
-     home?.[0] && menuItems.splice(0,0,home[0]);
-     menuItems =  part?.length > 0 ? menuItems.concat(part) : menuItems;
-  }
+  //     if (configEmployeeSideBar[keys[i]][0].path.indexOf(".") === -1) {
+  //       menuItems.splice(1, 0, {
+  //         type: "link",
+  //         text: t(`ACTION_TEST_${getSingleDisplayName}`),
+  //         link: configEmployeeSideBar[keys[i]][0]?.navigationURL,
+  //         icon: configEmployeeSideBar[keys[i]][0]?.leftIcon?.split?.(":")[1],
+  //         populators: {
+  //           onClick: () => {
+  //             history.push(configEmployeeSideBar[keys[i]][0]?.navigationURL);
+  //             closeSidebar();
+  //           },
+  //         },
+  //       });
+  //     } else {
+  //       menuItems.splice(1, 0, {
+  //         type: "dynamic",
+  //         moduleName: t(`ACTION_TEST_${getParentDisplayName}`),
+  //         links: configEmployeeSideBar[keys[i]]?.map((ob) => {return {...ob, displayName: t(`ACTION_TEST_${ob?.displayName?.toUpperCase()?.replace(/[ -]/g, "_")}`)}}),
+  //         icon: configEmployeeSideBar[keys[i]][1]?.leftIcon,
+  //       });
+  //     }
+  //   }
+  //    const indx = menuItems.findIndex(a => a.element === "HOME");
+  //    const home = menuItems.splice(indx,1);
+  //    const comp = menuItems.findIndex(a => a.element === "LANGUAGE");
+  //    const part = menuItems.splice(comp,menuItems?.length-comp);
+  //    menuItems.sort((a,b) => {
+  //     let c1 = a?.type === "dynamic" ? a?.moduleName : a?.text;
+  //     let c2 = b?.type === "dynamic" ? b?.moduleName : b?.text;
+  //     return c1.localeCompare(c2)
+  //    } );
+  //    home?.[0] && menuItems.splice(0,0,home[0]);
+  //    menuItems =  part?.length > 0 ? menuItems.concat(part) : menuItems;
+  // }
 
   /*  URL with openlink wont have sidebar and actions    */
   if (history.location.pathname.includes("/openlink")) {
