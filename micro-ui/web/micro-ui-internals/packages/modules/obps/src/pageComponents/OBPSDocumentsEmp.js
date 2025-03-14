@@ -8,6 +8,7 @@ const OBPSDocumentsEmp = ({ t, config, onSelect, userType, formData, setError: s
   const [documents, setDocuments] = useState(formData?.FeildReports?.[indexx]?.Documents || []);
   const [error, setError] = useState(null);
   const [previousLicenseDetails, setPreviousLicenseDetails] = useState(formData?.tradedetils1 || []);
+  const [isUploading, setIsUploading] = useState(false);
 
   let action = "create";
 
@@ -44,6 +45,24 @@ const OBPSDocumentsEmp = ({ t, config, onSelect, userType, formData, setError: s
 
   return (
     <div>
+       {isUploading && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(255, 255, 255, 0.8)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 1000,
+                    }}
+                >
+                    <Loader />
+                </div>
+            )}
       {finalTlDocumentsList?.map((document, index) => {
         return (
           <div >
@@ -63,6 +82,7 @@ const OBPSDocumentsEmp = ({ t, config, onSelect, userType, formData, setError: s
             config={config}
             formState={formState}
             stateId={stateId}
+            setIsUploading={setIsUploading}
           />
           </div>
         );
@@ -88,7 +108,8 @@ function SelectDocument({
   fromRawData,
   key,
   id,
-  stateId={stateId}
+  stateId={stateId},
+  setIsUploading
 }) {
   const filteredDocument = documents?.filter((item) => item?.documentType);
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -218,6 +239,7 @@ function SelectDocument({
             allowedFileTypesRegex={allowedFileTypes}
             allowedMaxSizeInMB={5}
             acceptFiles= "image/*, .pdf, .png, .jpeg, .jpg"
+            setIsUploading={setIsUploading}
           />
         </div>
       </LabelFieldPair>
