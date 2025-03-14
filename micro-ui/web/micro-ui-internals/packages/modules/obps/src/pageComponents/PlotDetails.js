@@ -16,6 +16,14 @@ const PlotDetails = ({ formData, onSelect, config }) => {
   const checkingFlow = formData?.uiFlow?.flow;
   // const state = Digit.ULBService.getStateId();
   // const { data, isLoading } = Digit.Hooks.obps.useScrutinyDetails(state, formData?.data?.scrutinyNumber)
+
+  const data = {
+    plotArea:formData?.data?.plotArea || formData?.plotInfo?.plotArea,
+    plotNumber:formData?.data?.plotNumber || formData?.plotInfo?.plotNumber,
+    khataNumber:formData?.data?.khataNumber || formData?.plotInfo?.khataNumber,
+    holdingNumber:formData?.data?.holdingNumber || formData?.additionalDetails?.holdingNumber,
+    registrationDetails:formData?.data?.registrationDetails || formData?.additionalDetails?.registrationDetails
+  }
   
   const handleSubmit = (data) => {
     onSelect(config?.key, { ...data });
@@ -30,7 +38,7 @@ const PlotDetails = ({ formData, onSelect, config }) => {
   return (
     <div>
       <Timeline flow= {checkingFlow === "OCBPA" ? "OCBPA" : ""}/>
-      <FormStep config={config} onSelect={handleSubmit} childrenAtTheBottom={false} t={t} _defaultValues={formData?.data} onSkip={onSkip}>
+      <FormStep config={config} onSelect={handleSubmit} childrenAtTheBottom={false} t={t} _defaultValues={data} onSkip={onSkip}>
         {/* <StatusTable>
           <Row className="border-none" label={t(`BPA_BOUNDARY_PLOT_AREA_LABEL`)} text={data?.planDetail?.planInformation?.plotArea ? `${data?.planDetail?.planInformation?.plotArea} ${t(`BPA_SQ_FT_LABEL`)}` : "NA"} />
           <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={data?.planDetail?.planInformation?.plotNo} />

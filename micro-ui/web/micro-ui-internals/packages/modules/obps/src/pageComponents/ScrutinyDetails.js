@@ -56,7 +56,17 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   const { t } = useTranslation();
   // const history = useHistory();
   // const [subOccupancy, setsubOccupancy] = useState([]);
-  const [subOccupancyObject, setsubOccupancyObject] = useState(formData?.data?.subOccupancy || formData?.landInfo?.unit || {});
+  const [subOccupancyObject, setsubOccupancyObject] = useState(formData?.data?.subOccupancy || formData?.landInfo?.unit || {
+    Block_Floor_1: formData?.buildingInfos?.[0]?.floorInfos?.map((info) => ({
+      Floor: info?.floorName,
+      Level: info?.level,
+      Occupancy: info?.usage,
+      BuildupArea: info?.buildupArea,
+      FloorArea: info?.floorArea,
+      CarpetArea: info?.carpetArea,
+      key: info?.level
+    }))
+  } || {});
   // const [subOccupancyOption, setsubOccupancyOption] = useState([]);
   // const [floorData, setfloorData] = useState([]);
   // let scrutinyNumber = `DCR82021WY7QW`;
@@ -70,12 +80,18 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   //   enabled: true,
   // });
   const [data] = useState({});
-  const [numberOfFloor, setNumberOfFloor] = useState(formData?.data?.numberOfFloors || 0);
+  const [numberOfFloor, setNumberOfFloor] = useState(formData?.data?.numberOfFloors || formData?.buildingInfos?.[0]?.numberOfFloors || 0);
   const blocks = useMemo(() => [{ number: 1 }], []);
   const [activeCell, setActiveCell] = useState(null);
   const [tempValue, setTempValue] = useState("");
-  const [demolitionArea, setDemolitionArea] = useState(formData?.data?.demolitionArea || "");
+  const [demolitionArea, setDemolitionArea] = useState(formData?.data?.demolitionArea || formData?.additionalDetails?.demolitionArea || "");
   const floorsInitialized = useRef(false); 
+
+  const defaultData = {
+    numberOfFloors:formData?.data?.numberOfFloors || formData?.buildingInfos?.[0].numberOfFloors,
+    totalHeight:formData?.data?.totalHeight || formData?.buildingInfos?.[0].buildingHeight,
+    totalBuiltupArea:formData?.data?.totalBuiltupArea || formData?.buildingInfos?.[0].totalBuiltupArea,
+  }
 
   useEffect(() => {
     setsubOccupancyObject(prev => {
@@ -341,7 +357,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         onChange={(e) => {
           setNumberOfFloor((pre) => (e?.target?.name === "numberOfFloors" && !isNaN(parseInt(e?.target?.value)) ? parseInt(e?.target?.value) : pre));
         }}
-        _defaultValues={formData?.data}
+        _defaultValues={defaultData}
 
       >
         {/* <CardSubHeader style={{ fontSize: "20px" }}>{t("BPA_EDCR_DETAILS")}</CardSubHeader>
