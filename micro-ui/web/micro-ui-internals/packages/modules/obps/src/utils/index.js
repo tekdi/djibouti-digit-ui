@@ -383,7 +383,6 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
       applicationNo: data?.applicationNo,
       approvalNo: data?.approvalNo,
       accountId: data?.accountId,
-      edcrNumber: data?.edcrNumber,
       riskType: data?.data?.riskType,
       businessService: data?.businessService,
       landId: data?.landId,

@@ -357,7 +357,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         level:Number(item.Level),
                         usage: item.Occupancy,
                         buildupArea: Number(item.BuildupArea),
-                        flootArea: Number(item.FloorArea),
+                        floorArea: Number(item.FloorArea),
                         carpetArea: Number(item.CarpetArea)
                     })
                 })
