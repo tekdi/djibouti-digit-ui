@@ -31,7 +31,7 @@ const NOCDetails = ({ t, config, onSelect, userType, formData, setError: setForm
     const [nocDatils, setNocDetails] = useState([]);
     const [nocDocumentTypeMaping, setNocDocumentTypeMaping] = useState([]);
     const [commonDocMaping, setCommonDocMaping] = useState([]);
-
+    const [isUploading, setIsUploading] = useState(false);
     const { data, isLoading, refetch } = Digit.Hooks.obps.useNocDetails(formData?.tenantId, { sourceRefId: sourceRefId });
     const { isLoading: nocDocsLoading, data: nocDocs } = Digit.Hooks.obps.useMDMS(stateId, "NOC", ["DocumentTypeMapping"]);
     const { isLoading: commonDocsLoading, data: commonDocs } = Digit.Hooks.obps.useMDMS(stateId, "common-masters", ["DocumentType"]);
@@ -125,6 +125,24 @@ const NOCDetails = ({ t, config, onSelect, userType, formData, setError: setForm
     return (
         <div>
             <Timeline currentStep={3} flow= {checkingFlow === "OCBPA" ? "OCBPA" : ""}/>
+            {isUploading && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(255, 255, 255, 0.8)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 1000,
+                    }}
+                >
+                    <Loader />
+                </div>
+            )}
             {!nocDocsLoading ?
                 <FormStep
                     t={t}
@@ -147,6 +165,7 @@ const NOCDetails = ({ t, config, onSelect, userType, formData, setError: setForm
                                 formData={formData}
                                 beforeUploadNocDocuments={beforeUploadNocDocuments}
                                 pdfLoading={pdfLoading}
+                                setIsUploading={setIsUploading}
                             />
                         );
                     })   :  <Loader/>}
@@ -166,7 +185,8 @@ function SelectDocument({
     setCheckRequiredFields,
     formData,
     beforeUploadNocDocuments,
-    pdfLoading
+    pdfLoading,
+    setIsUploading
 }) {
 
     const filteredDocument = nocDocuments?.filter((item) => item?.documentType?.includes(doc?.code))[0] || beforeUploadNocDocuments?.filter((item) => item?.documentType?.includes(doc?.code))[0];
@@ -266,6 +286,7 @@ function SelectDocument({
             allowedFileTypesRegex={allowedFileTypes}
             allowedMaxSizeInMB={5}
             acceptFiles= "image/*, .pdf, .png, .jpeg, .jpg"
+            setIsUploading={setIsUploading}
           />}
         {doc?.uploadedDocuments?.length && !pdfLoading && <DocumentsPreview documents={doc?.uploadedDocuments} svgStyles = {{}} isSendBackFlow = {false} isHrLine = {true} titleStyles ={{fontSize: "18px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px"}}/>}
         </div>

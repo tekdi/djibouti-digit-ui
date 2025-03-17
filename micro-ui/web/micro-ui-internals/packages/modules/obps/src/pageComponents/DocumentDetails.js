@@ -156,7 +156,6 @@ const SelectDocument = React.memo(function MyComponent({
     }
 
     function getData(e) {
-        setIsUploading(true);
         let key = selectedDocument.code;
         let data,newArr;
         if (e?.length > 0) {
@@ -181,13 +180,11 @@ const SelectDocument = React.memo(function MyComponent({
                 ...newfiles,
             ]
             setDocuments(__documents)
-            setTimeout(() => setIsUploading(false), 1000);
         }else if(e?.length==0){
             const __documents = [
                 ...documents.filter(e => e.documentType !== key ),
             ]
             setDocuments(__documents);
-            setTimeout(() => setIsUploading(false), 1000);
         }
     
         newArr?.map((ob) => {
@@ -302,6 +299,7 @@ const SelectDocument = React.memo(function MyComponent({
                 allowedFileTypesRegex={allowedFileTypes}
                 allowedMaxSizeInMB={5}
                 acceptFiles= "image/*, .pdf, .png, .jpeg, .jpg"
+                setIsUploading={setIsUploading}
             /> 
         {doc?.uploadedDocuments?.length && <DocumentsPreview isSendBackFlow={true} documents={doc?.uploadedDocuments} />}
         </div>

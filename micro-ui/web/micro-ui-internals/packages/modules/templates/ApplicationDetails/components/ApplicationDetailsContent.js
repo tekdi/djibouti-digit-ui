@@ -328,7 +328,7 @@ function ApplicationDetailsContent({
             <BPADocuments
               t={t}
               applicationData={applicationDetails?.applicationData}
-              docs={detail.additionalDetails.obpsDocuments}
+              docs={detail?.additionalDetails?.obpsDocuments}
               bpaActionsDetails={workflowDetails}
             />
           )}

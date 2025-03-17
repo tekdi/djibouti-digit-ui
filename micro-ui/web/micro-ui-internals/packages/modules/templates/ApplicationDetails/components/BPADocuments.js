@@ -24,14 +24,14 @@ const BPADocuments = ({ t, formData, applicationData, docs, bpaActionsDetails })
 
     useEffect(() => {
         let filtredBpaDocs = [];
-        if (bpaDocs?.BPA?.DocTypeMapping) {
+        if (!bpaDocsLoading && bpaDocs?.BPA?.DocTypeMapping) {
             // filtredBpaDocs = bpaDocs?.BPA?.DocTypeMapping?.filter(data => (data.WFState == "INPROGRESS"))
-            filtredBpaDocs = bpaDocs?.BPA?.DocTypeMapping?.filter(data => (data.WFState == applicationData?.status ? applicationData?.status : "INPROGRESS" && data.RiskType == applicationData?.riskType && data.ServiceType == applicationData?.additionalDetails?.serviceType && data.applicationType == applicationData?.additionalDetails?.applicationType))
+            filtredBpaDocs = bpaDocs?.BPA?.DocTypeMapping?.filter(data => ((data.WFState == applicationData?.status ? applicationData?.status : "INPROGRESS") && data.RiskType == applicationData?.riskType && data.ServiceType == applicationData?.additionalDetails?.serviceType && data.applicationType == applicationData?.additionalDetails?.applicationType))
         }
         let documentsList = [];
         filtredBpaDocs?.[0]?.docTypes?.forEach(doc => {
             let code = doc.code; doc.dropdownData = []; doc.uploadedDocuments = [];
-            commonDocs?.["common-masters"]?.DocumentType?.forEach(value => {
+            !commonDocsLoading && commonDocs?.["common-masters"]?.DocumentType?.forEach(value => {
                 let values = value.code.slice(0, code.length);
                 if (code === values) {
                     doc.hasDropdown = true;
@@ -42,7 +42,7 @@ const BPADocuments = ({ t, formData, applicationData, docs, bpaActionsDetails })
             doc.uploadedDocuments[0] = {};
             doc.uploadedDocuments[0].values = [];
             docs?.[0]?.values?.map(upDocs => {
-                if (code == `${upDocs?.documentType?.split('.')[0]}.${upDocs?.documentType?.split('.')[1]}`) {
+                if (code === `${upDocs?.documentType?.split('.')[0]}.${upDocs?.documentType?.split('.')[1]}`) {
                     doc.uploadedDocuments[0].values.push(upDocs)
                 }
             })

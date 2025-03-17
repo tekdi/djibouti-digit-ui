@@ -72,7 +72,10 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
 
   if(isSideBarScroll &&  !Digit.clikOusideFired)
   {
-    document.getElementById("sideBarMenu").scrollTo(0,0);
+    const sideBarMenu = document.getElementById("sideBarMenu");
+    if (sideBarMenu) {
+      sideBarMenu.scrollTo(0, 0);
+    }
   }
 
   const MenuItem = ({ item }) => {
@@ -182,7 +185,7 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
         >
           {profileItem}
           <div className="drawer-list" id="sideBarMenu">
-            {isEmployee ? renderSearch() : null}
+            {/* {isEmployee ? renderSearch() : null} */}
             {menuItems?.map((item, index) => (
               <div className={`sidebar-list ${pathname === item.link ? "active" : ""}`} key={index}>
                 <MenuItem item={item} />
