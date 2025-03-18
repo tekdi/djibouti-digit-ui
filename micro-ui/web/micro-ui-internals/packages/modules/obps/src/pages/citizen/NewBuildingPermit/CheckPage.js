@@ -123,7 +123,7 @@ import {
         let floors = [];
         block?.map((ob, i) => {
             floors.push({
-                Floor:t(`BPA_FLOOR_NAME_${(i)}`),
+                Floor:t(ob?.Floor),
                 Level:ob?.Level || ob?.level,
                 Occupancy:t(`${ob?.Occupancy || ob?.usage}`),
                 BuildupArea: ob?.BuildupArea || ob?.buildupArea || 0,

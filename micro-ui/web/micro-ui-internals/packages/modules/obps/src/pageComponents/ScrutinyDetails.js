@@ -57,8 +57,8 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   // const history = useHistory();
   // const [subOccupancy, setsubOccupancy] = useState([]);
   const [subOccupancyObject, setsubOccupancyObject] = useState(formData?.data?.subOccupancy || formData?.landInfo?.unit || {
-    Block_Floor_1: formData?.buildingInfos?.[0]?.floorInfos?.map((info) => ({
-      Floor: info?.floorName,
+    Block_Floor_1: formData?.buildingInfos?.[0]?.floorInfos?.map((info,i) => ({
+      Floor: `BPA_FLOOR_NAME_${info?.level-1}`,
       Level: info?.level,
       Occupancy: info?.usage,
       BuildupArea: info?.buildupArea,
@@ -122,7 +122,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
 
       if (floorDifference > 0) {
         Array.from({ length: floorDifference }, (_, i) => ({
-          Floor: t(`BPA_FLOOR_NAME_${existingFloors.length + i}`),
+          Floor: `BPA_FLOOR_NAME_${existingFloors.length + i}`,
           Level: existingFloors.length + i + 1,
           Occupancy: t(formData?.data?.occupancyType) || t("Residential"),
           BuildupArea: 0.0,
@@ -207,6 +207,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   
   const renderEditableCell = (rowIndex, columnId, block) => {
     const isActive = activeCell?.rowIndex === rowIndex && activeCell?.columnId === columnId;
+    const cellValue = subOccupancyObject[`Block_Floor_${block.number}`]?.[rowIndex]?.[columnId];
 
     return isActive && !["Floor", "Level", "Occupancy"].includes(columnId) ? (
       <TextInput
@@ -244,7 +245,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
           setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
         }}
       >
-        {subOccupancyObject[`Block_Floor_${block.number}`]?.[rowIndex]?.[columnId]}
+        {columnId === "Floor" ? t(cellValue || "") : cellValue}
       </button>
     );
   };
