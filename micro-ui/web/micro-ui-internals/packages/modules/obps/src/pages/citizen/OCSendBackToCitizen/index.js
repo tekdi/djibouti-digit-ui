@@ -27,32 +27,26 @@ const OCSendBackToCitizen = ({ parentRoute }) => {
 
   const { data: bpaData, isLoading: isBpaSearchLoading } = Digit.Hooks.obps.useBPASearch(tenantId, { applicationNo: applicationNo });
 
-  let scrutinyNumber = { edcrNumber: bpaData?.[0]?.edcrNumber }, sourceRefId = applicationNo;
-
-  const { data: edcrDetails, isLoading, refetch } = Digit.Hooks.obps.useScrutinyDetails(stateCode, scrutinyNumber, {
-    enabled: bpaData?.[0]?.edcrNumber ? true : false
-  });
-
-  const { data: nocdata, isLoading: isNocLoading, refetch: nocRefetch } = Digit.Hooks.obps.useNocDetails(tenantId, { sourceRefId: sourceRefId });
+  const { data: nocdata, isLoading: isNocLoading, refetch: nocRefetch } = Digit.Hooks.obps.useNocDetails(tenantId, { sourceRefId: applicationNo });
 
   const editApplication = window.location.href.includes("editApplication");
 
   useEffect(async () => {
     let isAlready = sessionStorage.getItem("BPA_IS_ALREADY_WENT_OFF_DETAILS");
     isAlready = isAlready ? JSON.parse(isAlready) : true;
-    if (!isAlready && !isNocLoading && !isBpaSearchLoading && !isLoading && !isMdmsLoading) {
+    if (!isAlready && !isNocLoading && !isBpaSearchLoading && !isMdmsLoading) {
       application = bpaData ? bpaData[0] : {};
-      if (bpaData && application && edcrDetails && mdmsData && nocdata) {
+      if (bpaData && application && mdmsData && nocdata) {
         application = bpaData[0];
         if (editApplication) {
           application.isEditApplication = true;
         }
         sessionStorage.setItem("bpaInitialObject", JSON.stringify({ ...application }));
-        let bpaEditDetails = await getBPAEditDetails(application, edcrDetails, mdmsData, nocdata, t);
+        let bpaEditDetails = await getBPAEditDetails(application, mdmsData, nocdata, t);
         setParams({ ...params, ...bpaEditDetails });
       }
     }
-  }, [bpaData, edcrDetails, mdmsData, nocdata]);
+  }, [bpaData, mdmsData, nocdata]);
 
 
   const goNext = (skipStep) => {
@@ -97,7 +91,7 @@ const OCSendBackToCitizen = ({ parentRoute }) => {
   const CheckPage = Digit?.ComponentRegistryService?.getComponent('OCBPASendBackCheckPage') ;
   const Acknowledgement = Digit?.ComponentRegistryService?.getComponent('OCSendBackAcknowledgement');
 
-  if (isNocLoading || isBpaSearchLoading || isLoading) {
+  if (isNocLoading || isBpaSearchLoading) {
     return <Loader />
   }
   

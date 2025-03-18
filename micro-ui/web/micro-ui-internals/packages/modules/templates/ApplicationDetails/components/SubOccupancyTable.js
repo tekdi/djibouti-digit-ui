@@ -62,6 +62,7 @@ const SubOccupancyTable = ({ edcrDetails, applicationData }) => {
         CarpetArea: ob.carpetArea || 0,
         key: t(ob.floorName),
       });
+      floors.sort((a, b) => a.Level - b.Level);
     });
     return floors;
   }
