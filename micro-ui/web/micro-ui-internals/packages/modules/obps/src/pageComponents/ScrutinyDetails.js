@@ -104,7 +104,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         ...prev,
         [blockKey]: existingFloors.map(floor => ({
           ...floor,
-          Occupancy: t(formData.data.occupancyType)
+          Occupancy: formData.data.occupancyType
         }))
       };
     });
@@ -124,7 +124,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         Array.from({ length: floorDifference }, (_, i) => ({
           Floor: `BPA_FLOOR_NAME_${existingFloors.length + i}`,
           Level: existingFloors.length + i + 1,
-          Occupancy: t(formData?.data?.occupancyType) || t("Residential"),
+          Occupancy: formData?.data?.occupancyType || t("Residential"),
           BuildupArea: 0.0,
           FloorArea: 0.0,
           CarpetArea: 0.0,
@@ -245,7 +245,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
           setTempValue(subOccupancyObject[`Block_Floor_${block.number}`][rowIndex][columnId]);
         }}
       >
-        {columnId === "Floor" ? t(cellValue || "") : cellValue}
+       {["Floor", "Occupancy"].includes(columnId) ? t(cellValue || "") : cellValue}
       </button>
     );
   };
@@ -474,15 +474,18 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
                   //globalSearch={filterValue}
                   initSortId="S N "
                   //onSearch={onSearch}
-                  // data={[{Floor:"ground floor",Level:1,Occupancy:"self",BuildupArea:440,FloorArea:400,CarpetArea:380,key:"ground floor"},{Floor:"first floor",Level:1,Occupancy:"self",BuildupArea:450,FloorArea:410,CarpetArea:390,key:"first floor"},{Floor:"second floor",Level:1,Occupancy:"self",BuildupArea:400,FloorArea:350,CarpetArea:300,key:"second floor"}]}
-                  data={(subOccupancyObject[`Block_Floor_${block.number}`]||[]).slice(0, 10)}
-                  columns={newTableColumns}
-                  getCellProps={(cellInfo) => {
-                    return {
-                      style: {},
-                    };
-                  }}
-                />
+                    // data={[{Floor:"ground floor",Level:1,Occupancy:"self",BuildupArea:440,FloorArea:400,CarpetArea:380,key:"ground floor"},{Floor:"first floor",Level:1,Occupancy:"self",BuildupArea:450,FloorArea:410,CarpetArea:390,key:"first floor"},{Floor:"second floor",Level:1,Occupancy:"self",BuildupArea:400,FloorArea:350,CarpetArea:300,key:"second floor"}]}
+                    data={(subOccupancyObject[`Block_Floor_${block.number}`] || [])
+                      .sort((a, b) => a.Level - b.Level)
+                      .slice(0, 10)
+                    }
+                    columns={newTableColumns}
+                    getCellProps={(cellInfo) => {
+                      return {
+                        style: {},
+                      };
+                    }}
+                  />
               </div>
             </div>
           </div>}

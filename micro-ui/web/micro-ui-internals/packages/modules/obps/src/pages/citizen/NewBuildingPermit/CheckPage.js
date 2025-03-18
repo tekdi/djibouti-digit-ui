@@ -327,7 +327,7 @@ import {
       </StatusTable>
       </Card>
       <Card style={{paddingRight:"16px"}}>
-      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmit} />
+      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} style={{ width: "fit-content" }} onSubmit={onSubmit} />
       </Card>
     </React.Fragment>
     );
