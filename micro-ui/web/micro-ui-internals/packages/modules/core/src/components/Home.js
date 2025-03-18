@@ -81,7 +81,7 @@ const iconSelector = (code) => {
 };
 const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => {
   const paymentModule = modules.filter(({ code }) => code === "Payment")[0];
-  const moduleArr = modules.filter(({ code }) => code !== "Payment");
+  const moduleArr = modules.filter(({ code }) => code !== "Payment" && code !== "Bills");
   const moduleArray = [paymentModule, ...moduleArr];
   const { t } = useTranslation();
   if (isLoading) {
