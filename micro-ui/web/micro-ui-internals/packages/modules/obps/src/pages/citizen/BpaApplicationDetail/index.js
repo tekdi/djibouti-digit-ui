@@ -534,7 +534,7 @@ const BpaApplicationDetail = () => {
                     <ActionBar /*style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px" }}*/>
                       <div style={{ width: "100%" }}>
                         <button 
-                        style={{  color: "#FFFFFF", fontSize: isMobile ? "19px" : "initial" }}
+                        style={{  color: "#FFFFFF", fontSize: isMobile ? "19px" : "initial", width:'fit-content' }}
                         className={`${checkForSubmitDisable(isFromSendBack, isTocAccepted) ? "submit-bar-disabled" : "submit-bar"}`}
                         disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)} 
                         name={workflowDetails?.data?.nextActions?.[0]?.action} 
