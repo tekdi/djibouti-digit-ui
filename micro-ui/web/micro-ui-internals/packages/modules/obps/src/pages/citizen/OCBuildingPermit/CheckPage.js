@@ -186,7 +186,7 @@ const CheckPage = ({ onSubmit, value }) => {
           <Row className="border-none" label={`${t(`BPA_BASIC_DETAILS_APP_DATE_LABEL`)}`} text={convertEpochToDateDMY(Number(data?.applicationDate))} />
           <Row className="border-none" label={`${t(`BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL`)}`} text={t(`WF_BPA_${data?.applicationType}`)} />
           <Row className="border-none" label={`${t(`BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL`)}`} text={t(data?.serviceType)} />
-          <Row className="border-none" label={`${t(`BPA_BASIC_DETAILS_OCCUPANCY_LABEL`)}`} text={data?.occupancyType} />
+          <Row className="border-none" label={`${t(`BPA_BASIC_DETAILS_OCCUPANCY_LABEL`)}`} text={t(data?.occupancyType)} />
           <Row className="border-none" label={`${t(`BPA_BASIC_DETAILS_RISK_TYPE_LABEL`)}`} text={t(`WF_BPA_${data?.riskType}`)} />
           <Row className="border-none" label={`${t(`BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL`)}`} text={data?.applicantName} />
         </StatusTable>
