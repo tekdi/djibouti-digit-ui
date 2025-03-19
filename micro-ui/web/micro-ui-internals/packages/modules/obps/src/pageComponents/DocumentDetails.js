@@ -16,7 +16,7 @@ import cloneDeep from "lodash/cloneDeep";
 
 const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
     const stateId = Digit.ULBService.getStateId();
-    const [documents, setDocuments] = useState(formData?.documents?.documents || []);
+    const [documents, setDocuments] = useState(formData?.PrevStateDocuments || formData?.documents?.documents || []);
     const [error, setError] = useState(null);
     const [enableSubmit, setEnableSubmit] = useState(true)
     const [checkRequiredFields, setCheckRequiredFields] = useState(false);
@@ -137,7 +137,7 @@ const SelectDocument = React.memo(function MyComponent({
     const [uploadedFile, setUploadedFile] = useState(() => documents?.filter((item) => item?.documentType?.includes(doc?.code)).map( e => ({fileStoreId: e?.fileStoreId, fileName: e?.fileName || ""}) ) || null);
     const [newArray, setnewArray ] = useState([]);
     const [uploadedfileArray, setuploadedfileArray] = useState([]);
-    const [fileArray, setfileArray] = useState([] || formData?.documents?.documents.filter((ob) => ob.documentType === selectedDocument.code) );
+    const [fileArray, setfileArray] = useState([selectedDocument] || (formData?.documents?.documents.filter((ob) => ob.documentType === selectedDocument.code)) );
 
     const handleSelectDocument = (value) => {
         if(filteredDocument?.documentType){
@@ -272,8 +272,8 @@ const SelectDocument = React.memo(function MyComponent({
 
     const uploadedFilesPreFill = useMemo(()=>{
         let selectedUplDocs=[];
-        formData?.documents?.documents?.filter((ob) => ob.documentType === selectedDocument.code).forEach(e =>
-            selectedUplDocs.push([e.fileName, {file: {name: e.fileName, type: e.documentType}, fileStoreId: {fileStoreId: e.fileStoreId, tenantId}}])
+        (formData?.documents?.documents?.length > 0 ? formData?.documents?.documents : formData?.PrevStateDocuments)?.filter((ob) => ob.documentType === selectedDocument.code).forEach(e =>
+            selectedUplDocs.push([e?.fileName || e?.additionalDetails?.fileName, {file: {name: e?.fileName || e?.additionalDetails?.fileName, type: e.documentType}, fileStoreId: {fileStoreId: e.fileStoreId, tenantId}}])
             )
         return selectedUplDocs;
     },[formData])
