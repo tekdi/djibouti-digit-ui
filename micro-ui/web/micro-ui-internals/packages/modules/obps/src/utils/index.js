@@ -537,7 +537,7 @@ export const convertEpochToDateDMY = (dateEpoch) => {
   return `${day}/${month}/${year}`;
 };
 
-export const getBPAEditDetails = async (data, APIScrutinyDetails, mdmsData, nocdata, t) => {
+export const getBPAEditDetails = async (data, mdmsData, nocdata, t) => {
   const getBlockIds = (unit) => {
     let blocks = {};
     unit &&
@@ -572,20 +572,18 @@ export const getBPAEditDetails = async (data, APIScrutinyDetails, mdmsData, nocd
   data.BlockIds = getBlockIds(data?.landInfo?.unit);
   data.address = data?.landInfo?.address;
   data.data = {
-    applicantName: APIScrutinyDetails?.planDetail?.planInformation?.applicantName,
+    applicantName: data?.additionalDetails?.applicantName,
     applicationDate: data?.auditDetails?.createdTime,
-    applicationType: APIScrutinyDetails?.appliactionType,
+    applicationType: data?.additionalDetails?.applicationType,
     holdingNumber: data?.additionalDetails?.holdingNo,
-    occupancyType: APIScrutinyDetails?.planDetail?.planInformation?.occupancy,
+    occupancyType: t(data?.additionalDetails?.occupancyType),
     registrationDetails: data?.additionalDetails?.registrationDetails,
     riskType: Digit.Utils.obps.calculateRiskType(
       mdmsData?.BPA?.RiskTypeComputation,
-      APIScrutinyDetails?.planDetail?.plot?.area,
-      APIScrutinyDetails?.planDetail?.blocks
+      data?.plotInfo?.plotArea,
+      data?.buildingInfos
     ),
-    serviceType: data?.additionalDetails?.serviceType || APIScrutinyDetails?.applicationSubType,
-    edcrDetails: APIScrutinyDetails,
-    scrutinyNumber: { edcrNumber: APIScrutinyDetails?.edcrNumber },
+    serviceType: data?.additionalDetails?.serviceType,
   };
 
   let PrevStateDocuments = [];
@@ -630,22 +628,22 @@ export const getBPAEditDetails = async (data, APIScrutinyDetails, mdmsData, nocd
 
   data.riskType = Digit.Utils.obps.calculateRiskType(
     mdmsData?.BPA?.RiskTypeComputation,
-    APIScrutinyDetails?.planDetail?.plot?.area,
-    APIScrutinyDetails?.planDetail?.blocks
+    data?.plotInfo?.plotArea,
+    data?.buildingInfos
   );
   data.subOccupancy = getBlocksforFlow(data?.landInfo?.unit);
 
   let bpaFlow = "BPA";
   mdmsData?.BPA?.homePageUrlLinks?.map((linkData) => {
-    if (APIScrutinyDetails?.appliactionType === linkData?.applicationType && APIScrutinyDetails?.applicationSubType === linkData?.serviceType) {
+    if (data?.additionalDetails?.applicationType === linkData?.applicationType && data?.additionalDetails?.serviceType === linkData?.serviceType) {
       bpaFlow = linkData?.flow;
     }
   });
 
   data.uiFlow = {
     flow: data?.businessService.includes("OC") ? "OCBPA" : data?.businessService?.split(".")[0],
-    applicationType: data?.additionalDetails?.applicationType || APIScrutinyDetails?.appliactionType,
-    serviceType: data?.additionalDetails?.serviceType || APIScrutinyDetails?.applicationSubType,
+    applicationType: data?.additionalDetails?.applicationType,
+    serviceType: data?.additionalDetails?.serviceType,
   };
 
   sessionStorage.setItem("BPA_IS_ALREADY_WENT_OFF_DETAILS", JSON.stringify(true));

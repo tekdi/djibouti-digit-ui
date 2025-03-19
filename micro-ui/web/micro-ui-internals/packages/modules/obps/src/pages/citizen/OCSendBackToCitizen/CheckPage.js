@@ -34,10 +34,10 @@ const CheckPage = ({ onSubmit, value }) => {
   const [selectedAction, setSelectedAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showToast, setShowToast] = useState(null);
-  const datafromAPI = value?.data?.edcrDetails;
+  // const datafromAPI = value?.data?.edcrDetails;
   const queryClient = useQueryClient();
-  const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments, PrevStateNocDocuments, applicationNo } = value;
-    
+  const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments, PrevStateNocDocuments, applicationNo, plotInfo, buildingInfos } = value;
+
   let routeLink = `/digit-ui/citizen/obps/sendbacktocitizen/${value.businessService=="BPA_OC" ? "ocbpa" : "bpa"}/${value?.tenantId}/${value?.applicationNo}`;
   if (value?.uiFlow?.flow === "OCBPA") routeLink = `/digit-ui/citizen/obps/sendbacktocitizen/ocbpa/${value?.tenantId}/${value?.applicationNo}`;
   if (value.businessService === "BPA_LOW") BusinessService = "BPA.LOW_RISK_PERMIT_FEE";
@@ -173,16 +173,17 @@ const CheckPage = ({ onSubmit, value }) => {
 
   function getFloorData(block) {
     let floors = [];
-    block?.building?.floors.map((ob) => {
+    block?.map((ob,i) => {
       floors.push({
-        Floor: t(`BPA_FLOOR_NAME_${ob.number}`),
-        Level: ob.number,
-        Occupancy: t(`${ob.occupancies?.[0]?.type}`),
-        BuildupArea: ob.occupancies?.[0]?.builtUpArea,
-        FloorArea: ob.occupancies?.[0]?.floorArea || 0,
-        CarpetArea: ob.occupancies?.[0]?.CarpetArea || 0,
-        key: t(`BPA_FLOOR_NAME_${ob.number}`),
+        Floor: t(`BPA_FLOOR_NAME_${ob?.level-1}`),
+        Level: ob?.level,
+        Occupancy: ob?.usage,
+        BuildupArea: ob?.buildupArea || 0,
+        FloorArea: ob?.floorArea || 0,
+        CarpetArea: ob?.carpetArea || 0,
+        key: t(`BPA_FLOOR_NAME_${ob?.level-1}`),
       });
+      floors.sort((a, b) => a.Level - b.Level);
     });
     return floors;
   }
@@ -234,17 +235,17 @@ const CheckPage = ({ onSubmit, value }) => {
       <Card style={{paddingRight:"16px"}}>
         <CardHeader>{t("BPA_PLOT_DETAILS_TITLE")}</CardHeader>
         <StatusTable>
-          <Row className="border-none" label={t(`BPA_BOUNDARY_PLOT_AREA_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.plotArea ? `${datafromAPI?.planDetail?.planInformation?.plotArea} ${t(`BPA_SQ_FT_LABEL`)}` : t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.plotNo || t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_KHATHA_NUMBER_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.khataNo || t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={data?.holdingNumber || t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={data?.registrationDetails || t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_BOUNDARY_PLOT_AREA_LABEL`)} text={plotInfo?.plotArea ? `${plotInfo?.plotArea} ${t(`BPA_SQ_FT_LABEL`)}` : t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={plotInfo?.plotNumber || t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_KHATHA_NUMBER_LABEL`)} text={plotInfo?.khataNumber || t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={additionalDetails?.holdingNumber || t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={additionalDetails?.registrationDetails || t("CS_NA")} />
         </StatusTable>
       </Card>
       <Card style={{paddingRight:"16px"}}>
-        <CardHeader>{t("BPA_STEPPER_SCRUTINY_DETAILS_HEADER")}</CardHeader>
-        <CardSubHeader>{t(value?.uiFlow?.flow === "OCBPA" ? "BPA_OC_EDCR_NO_LABEL" : "BPA_EDCR_DETAILS")}</CardSubHeader>
-        <StatusTable style={{ border: "none" }}>
+        {/* <CardHeader>{t("BPA_STEPPER_SCRUTINY_DETAILS_HEADER")}</CardHeader>
+        <CardSubHeader>{t(value?.uiFlow?.flow === "OCBPA" ? "BPA_OC_EDCR_NO_LABEL" : "BPA_EDCR_DETAILS")}</CardSubHeader> */}
+        {/* <StatusTable style={{ border: "none" }}>
           <Row className="border-none" label={t("BPA_EDCR_NO_LABEL")} text={data?.scrutinyNumber?.edcrNumber || t("CS_NA")}></Row>
           <CardSubHeader>{t("BPA_UPLOADED_PLAN_DIAGRAM")}</CardSubHeader>
           <LinkButton
@@ -258,22 +259,22 @@ const CheckPage = ({ onSubmit, value }) => {
             onClick={() => routeTo(datafromAPI?.planReport)}
           />
         <p style={{ marginTop: "8px", marginBottom: "20px", textAlign:"Left", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t(`BPA_SCRUTINY_REPORT_PDF`)}</p>
-        </StatusTable>
+        </StatusTable> */}
         <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
         <CardSubHeader>{value?.uiFlow?.flow === "OCBPA" ? t("BPA_ACTUAL_BUILDING_EXTRACT_HEADER") : t("BPA_BUILDING_EXTRACT_HEADER")}</CardSubHeader>
         <StatusTable>
-          <Row className="border-none" label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")} text={datafromAPI?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea ? `${datafromAPI?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea} ${t("BPA_SQ_MTRS_LABEL")}` : t("NA")}></Row>
-          <Row className="border-none" label={t("BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL")} text={datafromAPI?.planDetail?.blocks?.[0]?.building?.totalFloors}></Row>
-          <Row className="border-none" label={t("BPA_HEIGHT_FROM_GROUND_LEVEL_FROM_MUMTY")} text={`${datafromAPI?.planDetail?.blocks?.[0]?.building?.declaredBuildingHeight} ${t("BPA_MTRS_LABEL")}`}></Row>
+          <Row className="border-none" label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")} text={buildingInfos?.[0]?.totalBuiltupArea ? `${buildingInfos?.[0]?.totalBuiltupArea} ${t("BPA_SQ_MTRS_LABEL")}` : t("NA")}></Row>
+          <Row className="border-none" label={t("BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL")} text={buildingInfos?.[0]?.numberOfFloors}></Row>
+          <Row className="border-none" label={t("BPA_HEIGHT_FROM_GROUND_LEVEL_FROM_MUMTY")} text={`${buildingInfos?.[0]?.buildingHeight} ${t("BPA_MTRS_LABEL")}`}></Row>
         </StatusTable>
         <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
         <CardSubHeader>{t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>
-        {datafromAPI?.planDetail?.blocks.map((block, index) => (
-          <div key={index}>
-            <CardSubHeader style={{marginTop:"15px"}}>{t("BPA_BLOCK_SUBHEADER")} {index + 1}</CardSubHeader>
-            <StatusTable >
+        {/* {buildingInfos?.[0]?.map((block, index) => ( */}
+          <div>
+            {/* <CardSubHeader style={{marginTop:"15px"}}>{t("BPA_BLOCK_SUBHEADER")} {index + 1}</CardSubHeader> */}
+            {/* <StatusTable >
               <Row className="border-none" textStyle={{wordBreak:"break-word"}} label={t("BPA_SUB_OCCUPANCY_LABEL")} text={getBlockSubOccupancy(index) === "" ? t("CS_NA") : getBlockSubOccupancy(index)}></Row>
-            </StatusTable>
+            </StatusTable> */}
             <div style={{ overflow: "scroll" }}>
               <Table
                 className="customTable table-fixed-first-column table-border-style"
@@ -283,7 +284,7 @@ const CheckPage = ({ onSubmit, value }) => {
                 manualPagination={false}
                 isPaginationRequired={false}
                 initSortId="S N "
-                data={getFloorData(block)}
+                data={getFloorData(buildingInfos?.[0]?.floorInfos)}
                 columns={tableColumns}
                 getCellProps={(cellInfo) => {
                   return {
@@ -292,11 +293,11 @@ const CheckPage = ({ onSubmit, value }) => {
                 }}
               />
             </div>
-          </div>))}
+          </div>
           <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
         <CardSubHeader>{t("BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL")}</CardSubHeader>
         <StatusTable style={{ border: "none" }}>
-          <Row className="border-none" label={t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")} text={datafromAPI?.planDetail?.planInformation?.demolitionArea ? `${datafromAPI?.planDetail?.planInformation?.demolitionArea} ${t("BPA_SQ_MTRS_LABEL")} ` : t("CS_NA")}></Row>
+          <Row className="border-none" label={t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")} text={additionalDetails?.demolitionArea ? `${additionalDetails?.demolitionArea} ${t("BPA_SQ_MTRS_LABEL")} ` : t("CS_NA")}></Row>
         </StatusTable>
       </Card>
       {value?.uiFlow?.flow !== "OCBPA" ? <div>
@@ -350,18 +351,18 @@ const CheckPage = ({ onSubmit, value }) => {
         ))}
         </Card>
       <Card style={{paddingRight:"16px"}}>
-        <CardSubHeader>{t("BPA_SUMMARY_FEE_EST")}</CardSubHeader>
-        <StatusTable>
+        {/* <CardSubHeader>{t("BPA_SUMMARY_FEE_EST")}</CardSubHeader> */}
+        {/* <StatusTable>
           {reciept_data?.Payments?.[0]?.paymentDetails?.[0]?.bill?.billDetails?.[0]?.billAccountDetails.map((bill, index) => (
             <div key={index}>
               <Row className="border-none" label={t(`${bill.taxHeadCode}`)} text={`Fdj ${bill?.amount}`} />
             </div>
           ))}
           <Row className="border-none" label={t(`BPA_COMMON_TOTAL_AMT`)} text={`Fdj ${reciept_data?.Payments?.[0]?.paymentDetails?.[0]?.bill?.billDetails?.[0]?.amount || "0"}`} />
-        </StatusTable>
-        <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
+        </StatusTable> */}
+        {/* <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
         <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader>
-        <CardHeader>Fdj {reciept_data?.Payments?.[0]?.paymentDetails?.[0]?.bill?.billDetails?.[0]?.amount || "0"}</CardHeader>
+        <CardHeader>Fdj {reciept_data?.Payments?.[0]?.paymentDetails?.[0]?.bill?.billDetails?.[0]?.amount || "0"}</CardHeader> */}
         <SubmitBar label={t("BPA_COMMON_BUTTON_SUBMIT")} onSubmit={onActionSelect} />
       </Card>
       {showModal ? (

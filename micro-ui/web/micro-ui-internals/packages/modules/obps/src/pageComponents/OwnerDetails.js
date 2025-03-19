@@ -302,7 +302,6 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     })
                 });
                 let payload = {};
-                payload.edcrNumber = formData?.edcrNumber?.edcrNumber ? formData?.edcrNumber?.edcrNumber :formData?.data?.scrutinyNumber?.edcrNumber;
                 payload.riskType = formData?.data?.riskType;
                 payload.applicationType = formData?.data?.applicationType;
                 payload.serviceType = formData?.data?.serviceType;
