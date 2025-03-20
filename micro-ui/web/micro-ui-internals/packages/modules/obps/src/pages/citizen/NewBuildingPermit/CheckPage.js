@@ -123,7 +123,7 @@ import {
         let floors = [];
         block?.map((ob, i) => {
             floors.push({
-                Floor:t(ob?.Floor),
+                Floor: t(`BPA_FLOOR_NAME_${(ob?.Level || ob?.level)-1}`),
                 Level:ob?.Level || ob?.level,
                 Occupancy:t(`${ob?.Occupancy || ob?.usage}`),
                 BuildupArea: ob?.BuildupArea || ob?.buildupArea || 0,
@@ -266,7 +266,7 @@ import {
           />
           <Row className="border-none" textStyle={{paddingLeft:"12px"}} label={t(`BPA_DETAILS_PIN_LABEL`)} text={address?.pincode || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_CITY_LABEL`)} text={address?.city?.name || t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_LOC_MOHALLA_LABEL`)} text={address?.locality?.name || t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_LOC_MOHALLA_LABEL`)} text={t(`DJ_DJIBOUTI_REVENUE_${address?.locality?.code}`) || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_DETAILS_SRT_NAME_LABEL`)} text={address?.street || t("CS_NA")} />
           <Row className="border-none" label={t(`ES_NEW_APPLICATION_LOCATION_LANDMARK`)} text={address?.landmark || t("CS_NA")} />
       </StatusTable>

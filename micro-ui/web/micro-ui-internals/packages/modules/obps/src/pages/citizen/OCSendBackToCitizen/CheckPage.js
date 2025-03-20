@@ -177,7 +177,7 @@ const CheckPage = ({ onSubmit, value }) => {
       floors.push({
         Floor: t(`BPA_FLOOR_NAME_${ob?.level-1}`),
         Level: ob?.level,
-        Occupancy: ob?.usage,
+        Occupancy: t(ob?.usage),
         BuildupArea: ob?.buildupArea || 0,
         FloorArea: ob?.floorArea || 0,
         CarpetArea: ob?.carpetArea || 0,
@@ -227,7 +227,7 @@ const CheckPage = ({ onSubmit, value }) => {
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APP_DATE_LABEL`)} text={convertEpochToDateDMY(Number(data?.applicationDate))} />
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL`)} text={t(`WF_BPA_${data?.applicationType}`)} />
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL`)} text={t(data?.serviceType)} />
-          <Row className="border-none" label={t(`BPA_BASIC_DETAILS_OCCUPANCY_LABEL`)} text={data?.occupancyType} />
+          <Row className="border-none" label={t(`BPA_BASIC_DETAILS_OCCUPANCY_LABEL`)} text={t(data?.occupancyType)} />
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_RISK_TYPE_LABEL`)} text={t(`WF_BPA_${data?.riskType}`)} />
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL`)} text={data?.applicantName} />
         </StatusTable>
@@ -306,7 +306,7 @@ const CheckPage = ({ onSubmit, value }) => {
           <StatusTable>
             <Row className="border-none" label={t(`BPA_DETAILS_PIN_LABEL`)} text={address?.pincode || t("CS_NA")} />
             <Row className="border-none" label={t(`BPA_CITY_LABEL`)} text={address?.city?.name || t("CS_NA")} />
-            <Row className="border-none" label={t(`BPA_LOC_MOHALLA_LABEL`)} text={address?.locality?.name || t("CS_NA")} />
+            <Row className="border-none" label={t(`BPA_LOC_MOHALLA_LABEL`)} text={t(`DJ_DJIBOUTI_REVENUE_${address?.locality?.code}`) || t("CS_NA")} />
             <Row className="border-none" label={t(`BPA_DETAILS_SRT_NAME_LABEL`)} text={address?.street || t("CS_NA")} />
             <Row className="border-none" label={t(`ES_NEW_APPLICATION_LOCATION_LANDMARK`)} text={address?.landmark || t("CS_NA")} />
           </StatusTable>

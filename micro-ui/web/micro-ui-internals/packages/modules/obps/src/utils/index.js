@@ -171,9 +171,9 @@ export const getDocumentforBPA = (docs, PrevStateDocs) => {
           documentType: ob.documentType,
           fileStoreId: ob.fileStoreId,
           fileStore: ob.fileStoreId,
-          fileName: "",
+          fileName: ob.fileName,
           fileUrl: "",
-          additionalDetails: {},
+          additionalDetails: {fileName: ob.fileName},
           id: ob.id,
         });
       } else {
@@ -181,9 +181,9 @@ export const getDocumentforBPA = (docs, PrevStateDocs) => {
           documentType: ob.documentType,
           fileStoreId: ob.fileStoreId,
           fileStore: ob.fileStoreId,
-          fileName: "",
+          fileName: ob.fileName,
           fileUrl: "",
-          additionalDetails: {},
+          additionalDetails: {fileName: ob.fileName},
         });
       }
     });
