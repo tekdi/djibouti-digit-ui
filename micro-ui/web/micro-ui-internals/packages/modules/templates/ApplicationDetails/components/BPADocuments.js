@@ -33,7 +33,7 @@ const BPADocuments = ({ t, formData, applicationData, docs, bpaActionsDetails })
         let documentsList = [];
         filtredBpaDocs?.[0]?.docTypes?.forEach(doc => {
             let code = doc.code; doc.dropdownData = []; doc.uploadedDocuments = [];
-            !commonDocsLoading && commonDocs?.["common-masters"]?.DocumentType?.forEach(value => {
+            commonDocs?.["common-masters"]?.DocumentType?.forEach(value => {
                 let values = value.code.slice(0, code.length);
                 if (code === values) {
                     doc.hasDropdown = true;
@@ -53,7 +53,7 @@ const BPADocuments = ({ t, formData, applicationData, docs, bpaActionsDetails })
         sessionStorage.setItem("BPA_DOCUMENTS", JSON.stringify(documentsList));
         setBpaTaxDocuments(documentsList);
 
-    }, []);
+    }, [commonDocs, !commonDocsLoading]);
 
     useEffect(() => {
         let count = 0;
