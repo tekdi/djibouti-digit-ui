@@ -4,7 +4,8 @@ import {
     Dropdown,
     LabelFieldPair,
     MultiUploadWrapper,
-    CardSubHeader
+    CardSubHeader,
+    Loader
 } from "@egovernments/digit-ui-react-components";
 import DocumentsPreview from "./DocumentsPreview";
 
@@ -18,6 +19,7 @@ const BPADocuments = ({ t, formData, applicationData, docs, bpaActionsDetails })
     const [enableSubmit, setEnableSubmit] = useState(true)
     const [checkRequiredFields, setCheckRequiredFields] = useState(false);
     const [checkEnablingDocs, setCheckEnablingDocs] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     const { isLoading: bpaDocsLoading, data: bpaDocs } = Digit.Hooks.obps.useMDMS(stateId, "BPA", ["DocTypeMapping"]);
     const { isLoading: commonDocsLoading, data: commonDocs } = Digit.Hooks.obps.useMDMS(stateId, "common-masters", ["DocumentType"]);
@@ -77,6 +79,24 @@ const BPADocuments = ({ t, formData, applicationData, docs, bpaActionsDetails })
 
     return (
         <div>
+             {isUploading && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(255, 255, 255, 0.8)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 1000,
+                    }}
+                >
+                    <Loader />
+                </div>
+            )}
             {bpaTaxDocuments?.map((document, index) => {
                 return (
                     <div>
@@ -94,6 +114,7 @@ const BPADocuments = ({ t, formData, applicationData, docs, bpaActionsDetails })
                             actions={actions}
                             bpaTaxDocuments={bpaTaxDocuments}
                             checkEnablingDocs={checkEnablingDocs}
+                            setIsUploading={setIsUploading}
                         />
                     </div>
                 );
@@ -114,7 +135,8 @@ function SelectDocument({
     applicationStatus,
     actions,
     bpaTaxDocuments,
-    checkEnablingDocs
+    checkEnablingDocs,
+    setIsUploading
 }) {
 
     const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
@@ -222,6 +244,7 @@ function SelectDocument({
                                     allowedFileTypesRegex={allowedFileTypes}
                                     allowedMaxSizeInMB={5}
                                     acceptFiles= "image/*, .pdf, .png, .jpeg, .jpg"
+                                    setIsUploading={setIsUploading}
                                 />
                             </div>
                         </LabelFieldPair>
