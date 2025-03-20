@@ -27,6 +27,7 @@ const ApplicationOverview = () => {
   const [filesArray, setFilesArray] = useState(() => []);
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
   const isMobile = window.Digit.Utils.browser.isMobile();
+  const [isUploading, setIsUploading] = useState(false);
 
 
   const { isLoading: nocDocsLoading, data: nocDocs } = Digit.Hooks.obps.useMDMS(state, "NOC", ["DocumentTypeMapping"]);
@@ -150,6 +151,24 @@ const ApplicationOverview = () => {
             maxWidth: "950px",
             minWidth: "280px"
           }}>
+            {isUploading && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(255, 255, 255, 0.8)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 1000,
+                    }}
+                >
+                    <Loader />
+                </div>
+            )}
             <CardSectionHeader style={{ marginBottom: "16px", fontSize: "20px" }}>{`${t(`NOC_MAIN_${stringReplaceAll(nocDocumentsList?.[0]?.code, ".", "_")}_LABEL`)}`}</CardSectionHeader>
             <StatusTable style={{ position: "relative", marginTop: "19px" }}>
               <Row className="border-none" label={`${t(`NOC_${nocDataDetails?.[0]?.nocType}_APPLICATION_LABEL`)}`} text={t(nocDataDetails?.[0]?.applicationNo) || "NA"} />
@@ -181,6 +200,7 @@ const ApplicationOverview = () => {
                       setError={setError}
                       setNocDocuments={setNocDocuments}
                       nocDocuments={nocDocuments}
+                      setIsUploading={setIsUploading}
                     />
                   );
                 }) : null}
@@ -243,6 +263,7 @@ function SelectDocument({
   error,
   setError,
   nocDocuments,
+  setIsUploading
 }) {
 
   const filteredDocument = nocDocuments?.filter((item) => item?.documentType?.includes(doc?.code))[0];
@@ -306,6 +327,7 @@ function SelectDocument({
             allowedFileTypesRegex={allowedFileTypes}
             allowedMaxSizeInMB={5}
             acceptFiles= "image/*, .pdf, .png, .jpeg, .jpg"
+            setIsUploading={setIsUploading}
           />
         </div>
       </LabelFieldPair>

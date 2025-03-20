@@ -50,7 +50,7 @@ const TopBar = ({
         <div className="RightMostTopBarOptions">
           <h3 style={{borderLeft: "0", borderRight: "1px", borderStyle: "solid", paddingRight: "8px", marginRight: "8px"}}>{cityOfCitizenShownBesideLogo}</h3>
           {!hideNotificationIconOnSomeUrlsWhenNotLoggedIn ? changeLanguage : null}
-          {!hideNotificationIconOnSomeUrlsWhenNotLoggedIn ? (
+          {/* {!hideNotificationIconOnSomeUrlsWhenNotLoggedIn ? (
             <div className="EventNotificationWrapper" onClick={onNotificationIconClick}>
               {notificationCountLoaded && notificationCount ? (
                 <span>
@@ -59,7 +59,7 @@ const TopBar = ({
               ) : null}
               <NotificationBell />
             </div>
-          ) : null}
+          ) : null} */}
         </div>
       </div>
     </div>

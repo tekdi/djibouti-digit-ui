@@ -4,7 +4,8 @@ import {
   MultiUploadWrapper,
   StatusTable,
   Row,
-  LabelFieldPair
+  LabelFieldPair,
+  Loader
 } from "@egovernments/digit-ui-react-components";
 import DocumentsPreview from "./DocumentsPreview";
 
@@ -13,7 +14,8 @@ function SelectDocument({
   document: doc,
   setNocDocuments,
   setError,
-  nocDocuments
+  nocDocuments,
+  setIsUploading
 }) {
   const filteredDocument = nocDocuments?.filter((item) => item?.documentType?.includes(doc?.code))[0];
   const tenantId = Digit.ULBService.getStateId();
@@ -96,6 +98,7 @@ function SelectDocument({
               allowedFileTypesRegex={allowedFileTypes}
               allowedMaxSizeInMB={5}
               acceptFiles="image/*, .pdf, .png, .jpeg, .jpg"
+              setIsUploading={setIsUploading}
             />
           </div>
         </LabelFieldPair>
@@ -116,6 +119,7 @@ const NOCDocuments = ({ t, noc, docs, isNoc, applicationData,NOCdata, bpaActions
   const [nocDocuments, setNocDocuments] = Digit.Hooks.useSessionStorage(noc?.nocType, []);
   const [error, setError] = useState(null);
   const isEmployee = window.location.href.includes("/employee/")
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     setCommonDocMaping(commonDocs?.["common-masters"]?.DocumentType);
@@ -168,6 +172,24 @@ const NOCDocuments = ({ t, noc, docs, isNoc, applicationData,NOCdata, bpaActions
 
   return (
     <div style={{ border: "1px solid #D6D5D4", padding: "16px 0px 16px 8px", background: "#FAFAFA", borderRadius: "5px", marginBottom: "24px", maxWidth:"950px"/*  display: "flex" */ }}>
+      {isUploading && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(255, 255, 255, 0.8)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 1000,
+                    }}
+                >
+                    <Loader />
+                </div>
+            )}
       <StatusTable>
       <Row label={isEmployee ? `${t(`BPA_${noc?.nocType}_HEADER`)}` : t(`BPA_${noc?.nocType}_HEADER`)} labelStyle={{fontSize: "20px",width:"150%"}}/>
       {NOCdata && NOCdata.map((noc,index) => {
@@ -192,6 +214,7 @@ const NOCDocuments = ({ t, noc, docs, isNoc, applicationData,NOCdata, bpaActions
             setNocDocuments={setNocDocuments}
             nocDocuments={nocDocuments}
             checkEnablingDocs={checkEnablingDocs}
+            setIsUploading={setIsUploading}
           />
         );
       })}
