@@ -29,7 +29,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
         let documentStep;
         let RealignedDocument = [];
         bpaTaxDocuments?.map((ob) => {
-            documents && documents.filter(x => ob.code === x?.additionalDetails.category.replace(/[_\.]/, ".")).map((doc) => {
+            documents && documents.filter(x => ob.code === x?.additionalDetails?.category?.replace(/[_\.]/, ".")).map((doc) => {
                 RealignedDocument.push(doc);
             })
         })
